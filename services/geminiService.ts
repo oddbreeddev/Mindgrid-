@@ -1,7 +1,10 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Use Vite's environment variable system, falling back to process.env if injected
+const API_KEY = (import.meta as any).env?.VITE_API_KEY || (process.env as any).API_KEY;
+
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 /**
  * Generates study help or mentorship advice.
