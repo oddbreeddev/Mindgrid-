@@ -1,10 +1,7 @@
+import { GoogleGenAI, Type } from "@google/genai";
 
-import { GoogleGenAI } from "@google/genai";
-
-// Use Vite's environment variable system, falling back to process.env if injected
-const API_KEY = (import.meta as any).env?.VITE_API_KEY || (process.env as any).API_KEY;
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Initialize AI directly with the environment variable provided by Vite define
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 /**
  * Generates study help or mentorship advice.
@@ -36,17 +33,38 @@ export const generateAISchedule = async (goal: string) => {
     const prompt = `Create a balanced weekly study timetable for a Nigerian student preparing for: "${goal}". 
     The schedule should cover Monday to Sunday. 
     For each day, provide 2-3 specific study sessions with a subject name and a focus topic.
-    Format the output as a JSON array of objects. Each object should have 'day' (string), and 'sessions' (array of {subject, topic}).
-    Do not add markdown formatting. Just raw JSON.`;
+    Format the output as a JSON array of objects. Each object should have 'day' (string), and 'sessions' (array of {subject, topic}).`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              day: { type: Type.STRING },
+              sessions: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    subject: { type: Type.STRING },
+                    topic: { type: Type.STRING }
+                  },
+                  required: ["subject", "topic"]
+                }
+              }
+            },
+            required: ["day", "sessions"]
+          }
+        }
+      }
     });
 
-    const text = response.text || "[]";
-    const cleanJson = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    return JSON.parse(cleanJson);
+    return JSON.parse(response.text.trim());
   } catch (error) {
     console.error("Schedule Gen Error:", error);
     return null;
@@ -59,29 +77,39 @@ export const generateAISchedule = async (goal: string) => {
 export const fetchLatestNews = async (category: string) => {
   try {
     const prompt = `Find the 5 most recent and verified news articles or updates for Nigerian students related to "${category}". 
-    Format as JSON array: {title, excerpt, category, date}. No markdown.`;
+    Format as JSON array: {title, excerpt, category, date}.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { tools: [{ googleSearch: {} }] },
+      config: { 
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              excerpt: { type: Type.STRING },
+              category: { type: Type.STRING },
+              date: { type: Type.STRING }
+            },
+            required: ["title", "excerpt", "category"]
+          }
+        }
+      },
     });
 
-    const text = response.text || "[]";
-    const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
+    const articles = JSON.parse(response.text.trim());
+    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
     
-    try {
-      const cleanJson = text.replace(/```json/g, "").replace(/```/g, "").trim();
-      const articles = JSON.parse(cleanJson);
-      const chunks = groundingMetadata?.groundingChunks || [];
-      return articles.map((article: any, index: number) => ({
-        ...article,
-        url: chunks[index]?.web?.uri || chunks[0]?.web?.uri || "https://google.com/search?q=" + encodeURIComponent(article.title)
-      }));
-    } catch (e) {
-      return [];
-    }
+    return articles.map((article: any, index: number) => ({
+      ...article,
+      url: chunks[index]?.web?.uri || chunks[0]?.web?.uri || "https://google.com/search?q=" + encodeURIComponent(article.title)
+    }));
   } catch (error) {
+    console.error("News Fetch Error:", error);
     return [];
   }
 };
@@ -92,22 +120,32 @@ export const fetchLatestNews = async (category: string) => {
 export const fetchSocialBuzz = async () => {
   try {
     const prompt = `Identify 6 trending topics, memes, or discussions currently buzzing among Nigerian university students on Twitter, TikTok, and Instagram in the last 48 hours.
-    Format as JSON array of objects: {platform, topic, explanation, trendLevel (1-10)}.
-    Platforms should be one of: 'Twitter', 'TikTok', 'Instagram', 'Facebook'.
-    No markdown.`;
+    Format as JSON array of objects: {platform, topic, explanation, trendLevel}.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: { 
         tools: [{ googleSearch: {} }],
-        temperature: 0.9 
+        temperature: 0.9,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              platform: { type: Type.STRING },
+              topic: { type: Type.STRING },
+              explanation: { type: Type.STRING },
+              trendLevel: { type: Type.NUMBER }
+            },
+            required: ["platform", "topic", "explanation", "trendLevel"]
+          }
+        }
       },
     });
 
-    const text = response.text || "[]";
-    const cleanJson = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    return JSON.parse(cleanJson);
+    return JSON.parse(response.text.trim());
   } catch (error) {
     console.error("Social Buzz Error:", error);
     return [];
