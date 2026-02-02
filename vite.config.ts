@@ -4,13 +4,12 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // This allows the app to use process.env.API_KEY directly as required by the SDK
-    'process.env': {
-      API_KEY: JSON.stringify(process.env.API_KEY || ''),
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production')
-    },
-    // Global shim for libraries that expect 'process' to be defined
-    'global': {},
+    // Explicitly define the API_KEY for the client side. 
+    // Vite will replace 'process.env.API_KEY' with the actual value during build.
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+    // Global shim for libraries expecting 'global'
+    'global': 'window',
   },
   build: {
     outDir: 'dist',

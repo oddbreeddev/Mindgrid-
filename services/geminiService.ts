@@ -1,12 +1,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize AI directly with the environment variable provided by Vite define
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize AI. Note: process.env.API_KEY is injected by Vite at build time.
+const getAIInstance = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.error("MindGrid Error: API_KEY is missing. Ensure it is set in your deployment environment variables.");
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
+const ai = getAIInstance();
 
 /**
  * Generates study help or mentorship advice.
  */
 export const generateStudyHelp = async (query: string) => {
+  if (!ai) throw new Error("AI service not initialized. Check API Key.");
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -29,6 +39,7 @@ export const generateStudyHelp = async (query: string) => {
  * Generates an AI-powered study schedule based on user goals.
  */
 export const generateAISchedule = async (goal: string) => {
+  if (!ai) return null;
   try {
     const prompt = `Create a balanced weekly study timetable for a Nigerian student preparing for: "${goal}". 
     The schedule should cover Monday to Sunday. 
@@ -75,6 +86,7 @@ export const generateAISchedule = async (goal: string) => {
  * Fetches real-time verified news using Google Search Grounding.
  */
 export const fetchLatestNews = async (category: string) => {
+  if (!ai) return [];
   try {
     const prompt = `Find the 5 most recent and verified news articles or updates for Nigerian students related to "${category}". 
     Format as JSON array: {title, excerpt, category, date}.`;
@@ -118,6 +130,7 @@ export const fetchLatestNews = async (category: string) => {
  * Fetches trending social media topics for Nigerian students.
  */
 export const fetchSocialBuzz = async () => {
+  if (!ai) return [];
   try {
     const prompt = `Identify 6 trending topics, memes, or discussions currently buzzing among Nigerian university students on Twitter, TikTok, and Instagram in the last 48 hours.
     Format as JSON array of objects: {platform, topic, explanation, trendLevel}.`;
