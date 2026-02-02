@@ -1,8 +1,8 @@
-
 import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import CookieConsent from './components/CookieConsent';
 import HomePage from './pages/HomePage';
 import BlogPage from './pages/BlogPage';
 import ToolsPage from './pages/ToolsPage';
@@ -13,6 +13,7 @@ import CareersPage from './pages/CareersPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
+import TermsOfService from './pages/TermsOfService';
 
 const TitleManager: React.FC = () => {
   const location = useLocation();
@@ -29,6 +30,7 @@ const TitleManager: React.FC = () => {
       '/about': 'About MindGrid | Empowering Nigerian Students',
       '/contact': 'Contact Us | MindGrid Support',
       '/privacy': 'Privacy Policy | MindGrid Nigeria',
+      '/terms': 'Terms of Service | MindGrid Nigeria',
     };
 
     document.title = titles[location.pathname] || 'MindGrid | Nigerian Student Resource Hub';
@@ -56,9 +58,11 @@ const App: React.FC = () => {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsOfService />} />
           </Routes>
         </main>
         <Footer />
+        <CookieConsent />
       </div>
     </Router>
   );
