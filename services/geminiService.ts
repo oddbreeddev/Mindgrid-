@@ -1,36 +1,46 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize AI. Note: process.env.API_KEY is injected by Vite at build time.
-const getAIInstance = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    console.error("MindGrid Error: API_KEY is missing. Ensure it is set in your deployment environment variables.");
-    return null;
-  }
-  return new GoogleGenAI({ apiKey });
-};
+/**
+ * MindGrid AI Configuration
+ * The API key must be injected via Vite's 'define' config in vite.config.ts
+ */
+const API_KEY = process.env.API_KEY;
 
-const ai = getAIInstance();
+// Create AI instance. If key is missing, this will fail on use.
+const ai = new GoogleGenAI({ apiKey: API_KEY });
+
+/**
+ * Checks if the AI is properly configured
+ */
+export const isAIConfigured = () => {
+  return !!API_KEY && API_KEY.length > 5;
+};
 
 /**
  * Generates study help or mentorship advice.
+ * Uses Pro model for complex educational reasoning.
  */
 export const generateStudyHelp = async (query: string) => {
-  if (!ai) throw new Error("AI service not initialized. Check API Key.");
+  if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
+  
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3-pro-preview',
       contents: query,
       config: {
-        systemInstruction: `You are MindGrid AI, a multi-talented tutor for Nigerian students. 
-        Your expertise covers academic help and tech mentorship. 
-        Tone: Professional, encouraging, and witty.`,
+        systemInstruction: `You are MindGrid AI, a specialized academic tutor for Nigerian students.
+        Primary Goal: Help students understand complex concepts in WAEC/JAMB subjects and Tech.
+        Knowledge Base: Highly proficient in Nigerian curriculum, University requirements, and Tech skills.
+        Tone: Professional, expert, encouraging, and clear.
+        Restriction: Never encourage cheating. Always provide step-by-step explanations.`,
         temperature: 0.7,
       },
     });
+    
+    if (!response.text) throw new Error("EMPTY_RESPONSE");
     return response.text;
-  } catch (error) {
-    console.error("Gemini API Error:", error);
+  } catch (error: any) {
+    console.error("MindGrid AI Error:", error);
     throw error;
   }
 };
@@ -39,7 +49,8 @@ export const generateStudyHelp = async (query: string) => {
  * Generates an AI-powered study schedule based on user goals.
  */
 export const generateAISchedule = async (goal: string) => {
-  if (!ai) return null;
+  if (!isAIConfigured()) return null;
+  
   try {
     const prompt = `Create a balanced weekly study timetable for a Nigerian student preparing for: "${goal}". 
     The schedule should cover Monday to Sunday. 
@@ -86,7 +97,8 @@ export const generateAISchedule = async (goal: string) => {
  * Fetches real-time verified news using Google Search Grounding.
  */
 export const fetchLatestNews = async (category: string) => {
-  if (!ai) return [];
+  if (!isAIConfigured()) return [];
+  
   try {
     const prompt = `Find the 5 most recent and verified news articles or updates for Nigerian students related to "${category}". 
     Format as JSON array: {title, excerpt, category, date}.`;
@@ -130,10 +142,11 @@ export const fetchLatestNews = async (category: string) => {
  * Fetches trending social media topics for Nigerian students.
  */
 export const fetchSocialBuzz = async () => {
-  if (!ai) return [];
+  if (!isAIConfigured()) return [];
+  
   try {
-    const prompt = `Identify 6 trending topics, memes, or discussions currently buzzing among Nigerian university students on Twitter, TikTok, and Instagram in the last 48 hours.
-    Format as JSON array of objects: {platform, topic, explanation, trendLevel}.`;
+    const prompt = `Identify 6 trending topics currently buzzing among Nigerian university students on Twitter/X, TikTok, and Instagram in the last 48 hours.
+    Format as JSON array: {platform, topic, explanation, trendLevel}.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',

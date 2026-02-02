@@ -4,11 +4,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Explicitly define the API_KEY for the client side. 
-    // Vite will replace 'process.env.API_KEY' with the actual value during build.
+    // Vite uses 'process.env.API_KEY' mapping during build.
+    // Ensure the key exists in your deployment environment (Vercel/Netlify).
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
-    // Global shim for libraries expecting 'global'
     'global': 'window',
   },
   build: {
@@ -16,5 +15,9 @@ export default defineConfig({
     rollupOptions: {
       input: './index.html'
     }
+  },
+  server: {
+    port: 3000,
+    strictPort: true,
   }
 });
