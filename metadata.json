@@ -1,0 +1,7 @@
+{
+  "name": "MindGrid Nigeria",
+  "description": "A comprehensive educational platform for Nigerian students featuring study tools, AI-powered tutoring, career guidance, and academic resources.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

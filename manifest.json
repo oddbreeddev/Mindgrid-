@@ -1,0 +1,16 @@
+
+{
+  "short_name": "MindGrid",
+  "name": "MindGrid Nigeria: Student Resource Hub",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#16a34a",
+  "background_color": "#f8fafc"
+}
