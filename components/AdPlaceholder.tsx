@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface AdPlaceholderProps {
   slot?: string;
@@ -19,16 +19,39 @@ const AdPlaceholder: React.FC<AdPlaceholderProps> = ({
   className,
   style = { display: 'block' }
 }) => {
+  const adRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    // Only attempt to push if we are in a browser environment and not in development (optional check)
-    try {
-      if (typeof window !== 'undefined') {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+    let timer: any;
+    
+    const tryPush = () => {
+      // Check if the component is still mounted and the container has width
+      if (adRef.current) {
+        const width = adRef.current.offsetWidth;
+        
+        if (width > 0) {
+          try {
+            if (typeof window !== 'undefined') {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+            }
+          } catch (e) {
+            console.error("AdSense push error:", e);
+          }
+        } else {
+          // If width is 0, wait and try again. This happens during initial render or animations.
+          timer = setTimeout(tryPush, 100);
+        }
       }
-    } catch (e) {
-      console.error("AdSense error:", e);
+    };
+
+    if (slot) {
+      tryPush();
     }
-  }, [slot]); // Re-run if slot changes
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [slot]);
 
   // If no slot is provided, show the placeholder style
   if (!slot) {
@@ -43,7 +66,7 @@ const AdPlaceholder: React.FC<AdPlaceholderProps> = ({
   }
 
   return (
-    <div className={`ad-container overflow-hidden rounded-lg ${className}`}>
+    <div ref={adRef} className={`ad-container overflow-hidden rounded-lg ${className}`}>
       <ins
         className="adsbygoogle"
         style={style}

@@ -1,62 +1,89 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 
 /**
  * MindGrid AI Configuration
- * The API key must be injected via Vite's 'define' config in vite.config.ts
  */
-const API_KEY = process.env.API_KEY;
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Create AI instance. If key is missing, this will fail on use.
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Global throttler to keep within 15 RPM (Requests Per Minute)
+let lastRequestTimestamp = 0;
+const MIN_REQUEST_GAP = 4000; // 4 seconds between any two AI calls
 
 /**
- * Checks if the AI is properly configured
+ * Ensures we don't spam the API. If called too quickly, it waits.
  */
+const throttle = async () => {
+  const now = Date.now();
+  const timeSinceLast = now - lastRequestTimestamp;
+  if (timeSinceLast < MIN_REQUEST_GAP) {
+    const waitTime = MIN_REQUEST_GAP - timeSinceLast;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+  }
+  lastRequestTimestamp = Date.now();
+};
+
 export const isAIConfigured = () => {
-  return !!API_KEY && API_KEY.length > 5;
+  return !!process.env.API_KEY && process.env.API_KEY.length > 5;
 };
 
 /**
- * Generates study help or mentorship advice.
- * Uses Pro model for complex educational reasoning.
+ * Intelligent Cache with per-category TTL
  */
+const withSmartCache = async <T>(key: string, ttlHours: number, forceRefresh: boolean, fetcher: () => Promise<T>): Promise<T> => {
+  const cacheKey = `mindgrid_v2_${key}`;
+  const now = Date.now();
+  
+  if (!forceRefresh) {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const { timestamp, data } = JSON.parse(cached);
+        const ageHours = (now - timestamp) / (1000 * 60 * 60);
+        if (ageHours < ttlHours) {
+          console.log(`[MindGrid AI] Serving fresh cache for ${key} (${Math.round(ageHours * 60)}m old)`);
+          return data;
+        }
+      } catch (e) {
+        localStorage.removeItem(cacheKey);
+      }
+    }
+  }
+
+  await throttle();
+  const data = await fetcher();
+  localStorage.setItem(cacheKey, JSON.stringify({ timestamp: now, data }));
+  return data;
+};
+
 export const generateStudyHelp = async (query: string) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
+  await throttle();
   
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: query,
       config: {
-        systemInstruction: `You are MindGrid AI, a specialized academic tutor for Nigerian students.
-        Primary Goal: Help students understand complex concepts in WAEC/JAMB subjects and Tech.
-        Knowledge Base: Highly proficient in Nigerian curriculum, University requirements, and Tech skills.
-        Tone: Professional, expert, encouraging, and clear.
-        Restriction: Never encourage cheating. Always provide step-by-step explanations.`,
-        temperature: 0.7,
+        systemInstruction: `You are MindGrid AI, a specialized academic tutor for Nigerian students. 
+        Be extremely concise. Use bullet points for steps. Focus on WAEC/JAMB standards.`,
+        temperature: 0.6,
+        maxOutputTokens: 800, // Keeps responses concise and token-efficient
       },
     });
     
-    if (!response.text) throw new Error("EMPTY_RESPONSE");
-    return response.text;
+    return response.text || "I'm sorry, I couldn't generate a response.";
   } catch (error: any) {
     console.error("MindGrid AI Error:", error);
     throw error;
   }
 };
 
-/**
- * Generates an AI-powered study schedule based on user goals.
- */
 export const generateAISchedule = async (goal: string) => {
   if (!isAIConfigured()) return null;
-  
-  try {
-    const prompt = `Create a balanced weekly study timetable for a Nigerian student preparing for: "${goal}". 
-    The schedule should cover Monday to Sunday. 
-    For each day, provide 2-3 specific study sessions with a subject name and a focus topic.
-    Format the output as a JSON array of objects. Each object should have 'day' (string), and 'sessions' (array of {subject, topic}).`;
-
+  // Schedules are cached for 24 hours
+  return withSmartCache(`schedule_${goal.replace(/\s+/g, '_')}`, 24, false, async () => {
+    const prompt = `Create a weekly study timetable for a Nigerian student for: "${goal}". Monday-Sunday. JSON array of {day, sessions: [{subject, topic}]}.`;
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
@@ -85,95 +112,67 @@ export const generateAISchedule = async (goal: string) => {
         }
       }
     });
-
     return JSON.parse(response.text.trim());
-  } catch (error) {
-    console.error("Schedule Gen Error:", error);
-    return null;
-  }
+  });
 };
 
-/**
- * Fetches real-time verified news using Google Search Grounding.
- */
-export const fetchLatestNews = async (category: string) => {
+export const fetchLatestNews = async (category: string, forceRefresh: boolean = false) => {
   if (!isAIConfigured()) return [];
-  
-  try {
-    const prompt = `Find the 5 most recent and verified news articles or updates for Nigerian students related to "${category}". 
-    Format as JSON array: {title, excerpt, category, date}.`;
-
+  // News is cached for 4 hours
+  return withSmartCache(`news_${category}`, 4, forceRefresh, async () => {
+    const prompt = `5 most recent verified news articles for Nigerian students: "${category}". JSON: [{title, excerpt, category, date}].`;
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: { 
         tools: [{ googleSearch: {} }],
         responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              title: { type: Type.STRING },
-              excerpt: { type: Type.STRING },
-              category: { type: Type.STRING },
-              date: { type: Type.STRING }
-            },
-            required: ["title", "excerpt", "category"]
-          }
-        }
       },
     });
-
     const articles = JSON.parse(response.text.trim());
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-    
-    return articles.map((article: any, index: number) => ({
-      ...article,
-      url: chunks[index]?.web?.uri || chunks[0]?.web?.uri || "https://google.com/search?q=" + encodeURIComponent(article.title)
+    return articles.map((a: any, i: number) => ({
+      ...a,
+      url: chunks[i]?.web?.uri || chunks[0]?.web?.uri || `https://google.com/search?q=${encodeURIComponent(a.title)}`
     }));
-  } catch (error) {
-    console.error("News Fetch Error:", error);
-    return [];
-  }
+  });
 };
 
-/**
- * Fetches trending social media topics for Nigerian students.
- */
-export const fetchSocialBuzz = async () => {
+export const fetchCareerOpportunities = async (query: string = "Graduate Trainee", forceRefresh: boolean = false) => {
   if (!isAIConfigured()) return [];
-  
-  try {
-    const prompt = `Identify 6 trending topics currently buzzing among Nigerian university students on Twitter/X, TikTok, and Instagram in the last 48 hours.
-    Format as JSON array: {platform, topic, explanation, trendLevel}.`;
+  // Careers are cached for 8 hours
+  return withSmartCache(`careers_${query}`, 8, forceRefresh, async () => {
+    const prompt = `6 verified career opportunities in Nigeria: ${query}. JSON: [{title, company, location, type, description, postedDate}].`;
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+      }
+    });
+    const jobs = JSON.parse(response.text.trim());
+    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    return jobs.map((j: any, i: number) => ({
+      ...j,
+      url: chunks[i]?.web?.uri || chunks[0]?.web?.uri || `https://google.com/search?q=${encodeURIComponent(j.company + ' ' + j.title)}`
+    }));
+  });
+};
 
+export const fetchSocialBuzz = async (forceRefresh: boolean = false) => {
+  if (!isAIConfigured()) return [];
+  // Buzz is cached for 2 hours
+  return withSmartCache('social_buzz', 2, forceRefresh, async () => {
+    const prompt = `6 trending topics for Nigerian university students in last 48h. JSON: [{platform, topic, explanation, trendLevel}].`;
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: { 
         tools: [{ googleSearch: {} }],
-        temperature: 0.9,
         responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              platform: { type: Type.STRING },
-              topic: { type: Type.STRING },
-              explanation: { type: Type.STRING },
-              trendLevel: { type: Type.NUMBER }
-            },
-            required: ["platform", "topic", "explanation", "trendLevel"]
-          }
-        }
       },
     });
-
     return JSON.parse(response.text.trim());
-  } catch (error) {
-    console.error("Social Buzz Error:", error);
-    return [];
-  }
+  });
 };
