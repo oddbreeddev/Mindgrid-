@@ -11,8 +11,6 @@ const SIMULATED_DELAY = 600;
 
 export const subscribeToNewsletter = async (email: string, interests: string[], platform: string = 'email') => {
   try {
-    // We remove the manual created_at to let the database handle it via default now()
-    // and ensure 'email' (which acts as the unique ID) is present.
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .upsert({ 
@@ -34,6 +32,41 @@ export const subscribeToNewsletter = async (email: string, interests: string[], 
   }
 };
 
+// Admin Service: Log a new broadcast campaign
+export const logBroadcast = async (title: string, content: string, reach: number) => {
+  try {
+    const { data, error } = await supabase
+      .from('broadcast_logs')
+      .insert({
+        title,
+        content,
+        reach,
+        sent_at: new Date().toISOString()
+      })
+      .select();
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error("Failed to log broadcast", e);
+    return null;
+  }
+};
+
+// Admin Service: Fetch broadcast history
+export const getBroadcastHistory = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('broadcast_logs')
+      .select('*')
+      .order('sent_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error("Failed to fetch broadcast history", e);
+    return [];
+  }
+};
+
 // Admin Service: Fetch all subscribers
 export const getAllSubscribers = async () => {
   try {
@@ -50,20 +83,28 @@ export const getAllSubscribers = async () => {
   }
 };
 
-// Admin Service: Fetch registered students
-export const getRegisteredStudents = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('updated_at', { ascending: false });
-    
-    if (error) throw error;
-    return data || [];
-  } catch (e) {
-    console.error("Failed to fetch students", e);
-    return [];
-  }
+// Export to CSV helper
+export const downloadSubscribersCSV = (subscribers: any[]) => {
+  const headers = ['Email', 'Platform', 'Interests', 'Joined At'];
+  const csvContent = [
+    headers.join(','),
+    ...subscribers.map(s => [
+      s.email,
+      s.platform,
+      `"${s.interests?.join('; ')}"`,
+      s.created_at
+    ].join(','))
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `mindgrid_subscribers_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 // Admin Service: Comprehensive Platform Stats

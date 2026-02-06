@@ -60,4 +60,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  *   platform text default 'email',
  *   created_at timestamp with time zone default now()
  * );
+ * 
+ * -- 6. Broadcast Logs (Campaign Tracking)
+ * create table broadcast_logs (
+ *   id uuid default uuid_generate_v4() primary key,
+ *   title text,
+ *   content text,
+ *   reach integer,
+ *   sent_at timestamp with time zone default now()
+ * );
  */
