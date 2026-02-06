@@ -20,27 +20,45 @@ export const MOCK_NEWS = [
     category: "Scholarships",
     date: "3 days ago",
     url: "https://google.com/search?q=scholarships+for+nigerian+students"
-  },
+  }
+];
+
+export const MOCK_CURATED_ARTICLES = [
   {
-    title: "Lagos Tech Fest 2024: Student Developer Opportunities",
-    excerpt: "The upcoming Lagos Tech Fest is offering free tickets and exhibition booths to student-led startups. Learn how to apply before the deadline.",
-    category: "Tech",
-    date: "Today",
-    url: "https://google.com/search?q=Lagos+Tech+Fest"
-  },
-  {
-    title: "ASUU Updates: Negotiations Continue Over Staff Welfare",
-    excerpt: "Get the latest updates on the discussions between the Federal Government and the Academic Staff Union of Universities regarding campus infrastructure.",
+    id: "ready-1",
+    title: "Mastering the POST-UTME: A 4-Step Strategy for Nigerian Universities",
+    excerpt: "POST-UTME can be tougher than JAMB. Learn how to research past questions and manage time effectively.",
+    content: "## Introduction\nSuccess in the POST-UTME is the final hurdle for thousands of Nigerian students. While JAMB tests general knowledge, POST-UTME often tests your depth in specific core subjects relevant to your course of choice.\n\n### 1. Research Specific University Patterns\nEvery university has a unique style. For example, UNILAG might focus on Mathematics and General Knowledge, while OAU tends to be more subject-specific. Obtain 'Original' past questions for your specific school.\n\n### 2. Time Management is Key\nMost POST-UTME exams are computer-based (CBT) and give you very little time. Practice answering 40 questions in 25 minutes to build speed.",
     category: "University",
-    date: "5 hours ago",
-    url: "https://google.com/search?q=ASUU+latest+news"
+    suggested_by: "MindGrid Editorial",
+    created_at: new Date().toISOString()
   },
   {
-    title: "WAEC Results: 2024 May/June Statistics and How to Check",
-    excerpt: "The West African Examinations Council has released the official performance statistics. Follow these steps to check your result using the serial number.",
-    category: "WAEC",
-    date: "4 days ago",
-    url: "https://waecdirect.org"
+    id: "ready-2",
+    title: "Building a Tech Career While Studying in Nigeria",
+    excerpt: "You don't need to drop out of school to become a dev. Balance your degree with coding or UI/UX.",
+    content: "## The Student-Tech Paradox\nMany Nigerian students feel they must choose between their CGPA and their tech skills. In reality, some of Nigeria's best developers started in the dorms of FUTA, UNN, and UNILAG.\n\n### Leverage Free Time\nUse your holidays and the inevitable ASUU strikes to your advantage. Sites like YouTube, FreeCodeCamp, and local hubs provide a wealth of knowledge.",
+    category: "Tech",
+    suggested_by: "MindGrid Editorial",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "ready-3",
+    title: "How to Secure the NNPC/Chevron National Scholarship",
+    excerpt: "A complete guide on the application process, required documents, and the aptitude test format.",
+    content: "## Introduction\nThe NNPC/Chevron scholarship is one of the most prestigious awards for Nigerian undergraduates. It offers a significant financial boost to students in specific courses.\n\n### Eligibility Requirements\nYou must be a second-year (200 Level) student at the time of application with a minimum CGPA of 3.5 on a 5.0 scale. Core courses like Engineering, Medicine, and Geoscience are prioritized.",
+    category: "Scholarships",
+    suggested_by: "Scholarship Hub",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "ready-4",
+    title: "The Ultimate JAMB CBT Survival Guide",
+    excerpt: "Don't let the computer intimidate you. Learn the shortcuts and strategies for a 300+ score.",
+    content: "## Introduction\nJAMB is a race against time. Understanding the CBT interface is as important as knowing the syllabus.\n\n### Use the '8 Keys' Strategy\nJAMB software often uses keyboard shortcuts (A, B, C, D for options, P for previous, N for next). Using these instead of a mouse can save you up to 10 minutes.",
+    category: "JAMB",
+    suggested_by: "MindGrid Exam Prep",
+    created_at: new Date().toISOString()
   }
 ];
 
@@ -50,40 +68,8 @@ export const MOCK_CAREERS = [
     company: "Guaranty Trust Bank (GTCO)",
     location: "Lagos, Nigeria",
     type: "Graduate Trainee",
-    description: "Our Graduate Trainee program is designed to identify and groom the next generation of leaders in the financial services industry. Open to graduates with a minimum of 2.1.",
+    description: "Our Graduate Trainee program identifies and grooms leaders. Minimum 2.1.",
     url: "https://www.gtbank.com/about/careers"
-  },
-  {
-    title: "Software Engineering Intern",
-    company: "Paystack",
-    location: "Remote / Lagos",
-    type: "Internship",
-    description: "Join the engineering team at Paystack to build modern payment infrastructure for Africa. We are looking for students who are passionate about solving complex problems.",
-    url: "https://paystack.com/careers"
-  },
-  {
-    title: "Associate Consultant (Entry Level)",
-    company: "KPMG Nigeria",
-    location: "Lagos / Abuja",
-    type: "Full-time",
-    description: "Launch your career in professional services. We offer a world-class environment for learning and development across Audit, Tax, and Advisory.",
-    url: "https://home.kpmg/ng/en/home/careers.html"
-  },
-  {
-    title: "Digital Marketing Intern",
-    company: "Flutterwave",
-    location: "Lagos, Nigeria",
-    type: "Internship",
-    description: "Learn the ropes of global fintech marketing. You will assist in content creation, social media management, and community engagement.",
-    url: "https://flutterwave.com/careers"
-  },
-  {
-    title: "Management Trainee",
-    company: "Nigerian Breweries PLC",
-    location: "Ibadan / Lagos",
-    type: "Graduate Trainee",
-    description: "A fast-paced program for ambitious graduates looking to build a career in supply chain, sales, or corporate affairs within a global FMCG.",
-    url: "https://www.nbplc.com/careers"
   }
 ];
 
@@ -91,25 +77,7 @@ export const MOCK_BUZZ = [
   {
     platform: "Twitter",
     topic: "ASUU",
-    explanation: "Students are discussing the recent negotiations regarding university funding and potential strike actions.",
+    explanation: "Students are discussing funding and potential strike actions.",
     trendLevel: 9
-  },
-  {
-    platform: "TikTok",
-    topic: "SignOutDay",
-    explanation: "Final year students across Nigerian universities are sharing their white shirt signing ceremonies.",
-    trendLevel: 10
-  },
-  {
-    platform: "Instagram",
-    topic: "ScholarshipAlert",
-    explanation: "New posts detailing how to apply for the Commonwealth Scholarship are gaining massive engagement.",
-    trendLevel: 7
-  },
-  {
-    platform: "Twitter",
-    topic: "TechInNigeria",
-    explanation: "A debate on which stack is best for landing local remote jobs: React vs Laravel.",
-    trendLevel: 8
   }
 ];

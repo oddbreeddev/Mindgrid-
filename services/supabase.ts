@@ -38,4 +38,26 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  *   courses jsonb,
  *   created_at timestamp with time zone default now()
  * );
+ * 
+ * -- 4. Curated Articles (AI Generated Content)
+ * create table curated_articles (
+ *   id uuid default uuid_generate_v4() primary key,
+ *   title text not null,
+ *   excerpt text,
+ *   content text not null,
+ *   category text,
+ *   author_name text default 'MindGrid AI',
+ *   image_id text,
+ *   suggested_by text,
+ *   created_at timestamp with time zone default now()
+ * );
+ * 
+ * -- 5. Newsletter Subscribers
+ * create table newsletter_subscribers (
+ *   id uuid default uuid_generate_v4() primary key,
+ *   email text unique not null,
+ *   interests text[],
+ *   platform text default 'email',
+ *   created_at timestamp with time zone default now()
+ * );
  */

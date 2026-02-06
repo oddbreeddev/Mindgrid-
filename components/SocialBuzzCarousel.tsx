@@ -16,7 +16,8 @@ const SocialBuzzCarousel: React.FC = () => {
   useEffect(() => {
     const loadBuzz = async () => {
       const data = await getSocialBuzz();
-      if (data && data.length > 0) setBuzz(data);
+      // Fix: Use type assertion to match BuzzItem[] interface requirements as getSocialBuzz returns generalized data
+      if (data && data.length > 0) setBuzz(data as BuzzItem[]);
       setIsLoading(false);
     };
     loadBuzz();

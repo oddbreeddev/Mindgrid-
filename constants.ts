@@ -4,9 +4,11 @@ import { NavItem, GradeScale } from './types';
 export const NAV_LINKS: NavItem[] = [
   { label: 'Home', path: '/' },
   { label: 'Blog', path: '/blog' },
+  { label: 'Library', path: '/library' },
   { label: 'Tools', path: '/tools' },
   { label: 'AI Hub', path: '/ai-hub' },
   { label: 'Careers', path: '/careers' },
+  { label: 'Newsletter', path: '/newsletter' },
 ];
 
 export const GRADE_SCALE_5: GradeScale[] = [
