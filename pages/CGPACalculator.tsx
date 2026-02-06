@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { GRADE_SCALE_5 } from '../constants';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { supabase } from '../services/supabase';
 
 interface Course {
@@ -13,6 +14,7 @@ interface Course {
 
 const CGPACalculator: React.FC = () => {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [courses, setCourses] = useState<Course[]>([
     { id: '1', name: '', unit: 3, grade: 'A' },
   ]);
@@ -92,8 +94,10 @@ const CGPACalculator: React.FC = () => {
       });
       if (error) throw error;
       setLastSaved(new Date().toLocaleTimeString());
+      showToast('Record synced to cloud!', 'success');
     } catch (err) {
       console.error(err);
+      showToast('Cloud sync failed. Check connection.', 'error');
     } finally {
       setIsSyncing(false);
     }

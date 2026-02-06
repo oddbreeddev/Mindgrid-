@@ -1,23 +1,33 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
-import HomePage from './pages/HomePage';
-import BlogPage from './pages/BlogPage';
-import LibraryPage from './pages/LibraryPage';
-import ToolsPage from './pages/ToolsPage';
-import CGPACalculator from './pages/CGPACalculator';
-import TimetablePlanner from './pages/TimetablePlanner';
-import AIHub from './pages/AIHub';
-import CareersPage from './pages/CareersPage';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsOfService from './pages/TermsOfService';
-import LoginPage from './pages/LoginPage';
-import NewsletterPage from './pages/NewsletterPage';
+
+// Lazy Loaded Pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const LibraryPage = lazy(() => import('./pages/LibraryPage'));
+const ToolsPage = lazy(() => import('./pages/ToolsPage'));
+const CGPACalculator = lazy(() => import('./pages/CGPACalculator'));
+const TimetablePlanner = lazy(() => import('./pages/TimetablePlanner'));
+const AIHub = lazy(() => import('./pages/AIHub'));
+const CareersPage = lazy(() => import('./pages/CareersPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
+
+// Loading Fallback
+const PageLoader = () => (
+  <div className="min-h-[70vh] flex flex-col items-center justify-center">
+    <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+    <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em]">Syncing MindGrid...</p>
+  </div>
+);
 
 const TitleManager: React.FC = () => {
   const location = useLocation();
@@ -54,22 +64,24 @@ const App: React.FC = () => {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/library" element={<LibraryPage />} />
-            <Route path="/tools" element={<ToolsPage />} />
-            <Route path="/tools/cgpa" element={<CGPACalculator />} />
-            <Route path="/tools/timetable" element={<TimetablePlanner />} />
-            <Route path="/ai-hub" element={<AIHub />} />
-            <Route path="/careers" element={<CareersPage />} />
-            <Route path="/newsletter" element={<NewsletterPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/login" element={<LoginPage />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/library" element={<LibraryPage />} />
+              <Route path="/tools" element={<ToolsPage />} />
+              <Route path="/tools/cgpa" element={<CGPACalculator />} />
+              <Route path="/tools/timetable" element={<TimetablePlanner />} />
+              <Route path="/ai-hub" element={<AIHub />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/newsletter" element={<NewsletterPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Routes>
+          </Suspense>
         </main>
         <Footer />
         <CookieConsent />
