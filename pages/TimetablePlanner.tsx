@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { generateAISchedule } from '../services/geminiService';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../services/supabase';
 
 interface StudySession {
   subject: string;
@@ -16,28 +18,64 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const COMMON_SUBJECTS = ['Mathematics', 'English Language', 'Physics', 'Chemistry', 'Biology', 'Economics', 'Government', 'Literature', 'Commerce', 'Financial Accounting', 'CRS/IRS', 'Coding/Tech'];
 
 const TimetablePlanner: React.FC = () => {
+  const { user } = useAuth();
   const [timetable, setTimetable] = useState<DayPlan[]>([]);
   const [goal, setGoal] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('Monday');
 
-  // Load from LocalStorage
+  // Load from Supabase (if logged in) or LocalStorage
   useEffect(() => {
-    const saved = localStorage.getItem('mindgrid_timetable');
-    if (saved) {
-      setTimetable(JSON.parse(saved));
-    } else {
-      // Initialize empty timetable
-      setTimetable(DAYS.map(d => ({ day: d, sessions: [] })));
-    }
-  }, []);
+    const loadTimetable = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('timetables')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+        
+        if (data) {
+          setTimetable(data.data);
+          setGoal(data.goal);
+          return;
+        }
+      }
 
-  // Save to LocalStorage
-  useEffect(() => {
-    if (timetable.length > 0) {
-      localStorage.setItem('mindgrid_timetable', JSON.stringify(timetable));
+      const saved = localStorage.getItem('mindgrid_timetable');
+      if (saved) {
+        setTimetable(JSON.parse(saved));
+      } else {
+        setTimetable(DAYS.map(d => ({ day: d, sessions: [] })));
+      }
+    };
+
+    loadTimetable();
+  }, [user]);
+
+  // Handle Cloud Saving
+  const syncToCloud = async (newTimetable: DayPlan[], currentGoal: string) => {
+    if (!user) {
+      localStorage.setItem('mindgrid_timetable', JSON.stringify(newTimetable));
+      return;
     }
-  }, [timetable]);
+
+    setIsSaving(true);
+    try {
+      await supabase.from('timetables').upsert({
+        user_id: user.id,
+        goal: currentGoal,
+        data: newTimetable,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' }); // Simplified upsert for demo
+    } catch (e) {
+      console.error("Cloud sync failed", e);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleAISchedule = async () => {
     if (!goal.trim()) return;
@@ -45,24 +83,31 @@ const TimetablePlanner: React.FC = () => {
     const result = await generateAISchedule(goal);
     if (result && Array.isArray(result)) {
       setTimetable(result);
+      syncToCloud(result, goal);
     }
     setIsGenerating(false);
   };
 
   const addSession = (day: string) => {
     const newSession = { subject: 'Mathematics', topic: 'New Topic' };
-    setTimetable(prev => prev.map(d => d.day === day ? { ...d, sessions: [...d.sessions, newSession] } : d));
+    const updated = timetable.map(d => d.day === day ? { ...d, sessions: [...d.sessions, newSession] } : d);
+    setTimetable(updated);
+    syncToCloud(updated, goal);
   };
 
   const removeSession = (day: string, idx: number) => {
-    setTimetable(prev => prev.map(d => d.day === day ? { ...d, sessions: d.sessions.filter((_, i) => i !== idx) } : d));
+    const updated = timetable.map(d => d.day === day ? { ...d, sessions: d.sessions.filter((_, i) => i !== idx) } : d);
+    setTimetable(updated);
+    syncToCloud(updated, goal);
   };
 
   const updateSession = (day: string, idx: number, field: keyof StudySession, val: string) => {
-    setTimetable(prev => prev.map(d => d.day === day ? {
+    const updated = timetable.map(d => d.day === day ? {
       ...d,
       sessions: d.sessions.map((s, i) => i === idx ? { ...s, [field]: val } : s)
-    } : d));
+    } : d);
+    setTimetable(updated);
+    syncToCloud(updated, goal);
   };
 
   const currentDayPlan = timetable.find(d => d.day === activeTab);
@@ -72,7 +117,15 @@ const TimetablePlanner: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
         <div>
           <h1 className="text-4xl font-black text-slate-800 mb-2">Study <span className="text-green-600">Planner</span></h1>
-          <p className="text-slate-500">Master your time. Win your exams.</p>
+          <div className="flex items-center gap-2">
+            <p className="text-slate-500">Master your time. Win your exams.</p>
+            {user && (
+              <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                <i className={isSaving ? 'fas fa-spinner fa-spin' : 'fas fa-cloud'}></i>
+                {isSaving ? 'Syncing...' : 'Cloud Active'}
+              </span>
+            )}
+          </div>
         </div>
         
         <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex-grow max-w-lg">
@@ -138,12 +191,7 @@ const TimetablePlanner: React.FC = () => {
                     <i className="fas fa-calendar-day"></i>
                   </div>
                   <p className="text-slate-400 font-medium">No sessions planned for {activeTab}.</p>
-                  <button 
-                    onClick={() => addSession(activeTab)}
-                    className="mt-4 text-green-600 font-bold hover:underline"
-                  >
-                    Add your first session
-                  </button>
+                  {!user && <p className="text-[10px] text-slate-300 mt-2 uppercase font-bold tracking-widest">Guest Mode: Saves to device only</p>}
                 </div>
               ) : (
                 currentDayPlan?.sessions.map((session, idx) => (
@@ -183,17 +231,6 @@ const TimetablePlanner: React.FC = () => {
                 ))
               )}
             </div>
-            
-            {currentDayPlan && currentDayPlan.sessions.length > 0 && (
-               <div className="mt-12 p-6 border-t border-slate-100 flex justify-center">
-                 <button 
-                   onClick={() => window.print()}
-                   className="text-slate-500 font-bold text-sm hover:text-slate-800 transition-colors flex items-center gap-2"
-                 >
-                   <i className="fas fa-print"></i> Print My Schedule
-                 </button>
-               </div>
-            )}
           </div>
         </div>
       </div>
