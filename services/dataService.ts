@@ -5,23 +5,86 @@ import { supabase } from './supabase';
 
 /**
  * MindGrid Data Service
- * Hybrid: Uses AI for real-time news and static fallbacks.
  */
 
 const SIMULATED_DELAY = 600;
 
 export const subscribeToNewsletter = async (email: string, interests: string[], platform: string = 'email') => {
   try {
-    const { error } = await supabase
+    // We remove the manual created_at to let the database handle it via default now()
+    // and ensure 'email' (which acts as the unique ID) is present.
+    const { data, error } = await supabase
       .from('newsletter_subscribers')
-      .upsert({ email, interests, platform }, { onConflict: 'email' });
+      .upsert({ 
+        email: email.trim().toLowerCase(), 
+        interests: interests.length > 0 ? interests : ['General'], 
+        platform 
+      }, { onConflict: 'email' })
+      .select();
+    
+    if (error) {
+      console.error("Supabase Submission Error:", error);
+      return { success: false, error: error.message };
+    }
+    
+    return { success: true };
+  } catch (e: any) {
+    console.error("Newsletter Subscription Exception:", e);
+    return { success: false, error: e.message || 'Unknown network error' };
+  }
+};
+
+// Admin Service: Fetch all subscribers
+export const getAllSubscribers = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('newsletter_subscribers')
+      .select('*')
+      .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return { success: true };
+    return data || [];
   } catch (e) {
-    console.error("Newsletter Subscription Error:", e);
-    // Even if DB fails, simulate success for UI demo if needed
-    return { success: true };
+    console.error("Failed to fetch subscribers", e);
+    return [];
+  }
+};
+
+// Admin Service: Fetch registered students
+export const getRegisteredStudents = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('updated_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error("Failed to fetch students", e);
+    return [];
+  }
+};
+
+// Admin Service: Comprehensive Platform Stats
+export const getAdminDashboardStats = async () => {
+  try {
+    const [subscribers, profiles, records, articles] = await Promise.all([
+      supabase.from('newsletter_subscribers').select('id', { count: 'exact', head: true }),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
+      supabase.from('cgpa_records').select('id', { count: 'exact', head: true }),
+      supabase.from('curated_articles').select('id', { count: 'exact', head: true })
+    ]);
+
+    return {
+      subscribers: subscribers.count || 0,
+      students: profiles.count || 0,
+      academicOperations: records.count || 0,
+      knowledgeEntries: (articles.count || 0) + MOCK_CURATED_ARTICLES.length
+    };
+  } catch (e) {
+    console.error("Stats Fetch Error:", e);
+    return { subscribers: 0, students: 0, academicOperations: 0, knowledgeEntries: 0 };
   }
 };
 

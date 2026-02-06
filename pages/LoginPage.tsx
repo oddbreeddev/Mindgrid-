@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { supabase } from '../services/supabase';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -9,6 +11,9 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState('');
+  
+  const { setAdminStatus } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -16,18 +21,32 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setMessage('');
 
+    // Secret Admin Bypass: Hardcoded credentials for MindGrid Admin
+    if (email.toLowerCase() === 'admin@mind.grid' && password === '08022857727') {
+      setTimeout(() => {
+        setAdminStatus(true);
+        showToast('Administrative access granted.', 'success');
+        setLoading(false);
+        navigate('/admin');
+      }, 800);
+      return;
+    }
+
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         setMessage('Check your email for confirmation link!');
+        showToast('Account created! Check email.', 'info');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        showToast('Login successful!', 'success');
         navigate('/ai-hub');
       }
     } catch (error: any) {
       setMessage(error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -35,7 +54,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto my-20 px-4">
-      <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
+      <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100 animate-in">
         <div className="text-center mb-8">
           <div className="bg-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-green-200">
             <i className="fas fa-user-graduate"></i>
@@ -52,12 +71,12 @@ const LoginPage: React.FC = () => {
 
         <form onSubmit={handleAuth} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Student Email</label>
+            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
             <input 
-              type="email" 
+              type="text" 
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-green-500 transition-all"
-              placeholder="you@university.edu.ng"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all font-medium"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -67,7 +86,7 @@ const LoginPage: React.FC = () => {
             <input 
               type="password" 
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-green-500 transition-all"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all font-medium"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -75,9 +94,9 @@ const LoginPage: React.FC = () => {
           </div>
           <button 
             disabled={loading}
-            className="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-slate-800 transition-all shadow-xl disabled:opacity-50 active:scale-95 mt-4"
+            className="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-slate-800 transition-all shadow-xl disabled:opacity-50 active:scale-95 mt-4 flex items-center justify-center gap-3"
           >
-            {loading ? <i className="fas fa-spinner fa-spin mr-2"></i> : null}
+            {loading ? <i className="fas fa-spinner fa-spin"></i> : null}
             {isSignUp ? 'Create Account' : 'Sign In'}
           </button>
         </form>

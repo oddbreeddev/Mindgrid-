@@ -20,6 +20,7 @@ const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 // Loading Fallback
 const PageLoader = () => (
@@ -43,6 +44,7 @@ const TitleManager: React.FC = () => {
       '/ai-hub': 'AI Study Assistant & Tutor | MindGrid',
       '/careers': 'Student Jobs & Tech Internships Nigeria | MindGrid',
       '/newsletter': 'MindGrid Intelligence | Academic Newsletter',
+      '/admin': 'Admin Control | MindGrid Nigeria',
       '/about': 'About MindGrid | Empowering Nigerian Students',
       '/contact': 'Contact Us | MindGrid Support',
       '/privacy': 'Privacy Policy | MindGrid Nigeria',
@@ -75,6 +77,7 @@ const App: React.FC = () => {
               <Route path="/ai-hub" element={<AIHub />} />
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/newsletter" element={<NewsletterPage />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />

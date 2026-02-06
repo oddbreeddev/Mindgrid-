@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import { subscribeToNewsletter } from '../services/dataService';
+import { useToast } from '../context/ToastContext';
 
 const NewsletterPage: React.FC = () => {
+  const { showToast } = useToast();
   const [email, setEmail] = useState('');
   const [platform, setPlatform] = useState('email');
   const [interests, setInterests] = useState<string[]>([]);
@@ -25,22 +27,33 @@ const NewsletterPage: React.FC = () => {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !email.trim()) {
+      showToast('Please enter a valid email or phone number', 'error');
+      return;
+    }
     
     setIsSubmitting(true);
-    const result = await subscribeToNewsletter(email, interests, platform);
-    
-    if (result.success) {
-      setStatus('success');
-    } else {
+    try {
+      const result = await subscribeToNewsletter(email, interests, platform);
+      
+      if (result.success) {
+        setStatus('success');
+        showToast('You have been added to the Intelligence Feed!', 'success');
+      } else {
+        setStatus('error');
+        showToast(result.error || 'Subscription failed. Please check your connection.', 'error');
+      }
+    } catch (err) {
       setStatus('error');
+      showToast('A network error occurred.', 'error');
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   if (status === 'success') {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-24 text-center">
+      <div className="max-w-2xl mx-auto px-4 py-24 text-center animate-in">
         <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center text-green-600 text-4xl mx-auto mb-8 shadow-inner animate-bounce">
           <i className="fas fa-check"></i>
         </div>
@@ -48,7 +61,7 @@ const NewsletterPage: React.FC = () => {
         <p className="text-slate-500 text-lg mb-8">We've added your preferences to our database. Watch your {platform} for the next MindGrid Intelligence report.</p>
         <button 
           onClick={() => setStatus('idle')}
-          className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl"
+          className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all"
         >
           Adjust Preferences
         </button>

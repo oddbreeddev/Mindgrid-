@@ -2,28 +2,35 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { subscribeToNewsletter } from '../services/dataService';
+import { useToast } from '../context/ToastContext';
 
 const Footer: React.FC = () => {
+  const { showToast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) return;
+    if (!email || !email.includes('@')) {
+      showToast('Please enter a valid email address', 'error');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      // For footer quick-sub, we default to general interest and email platform
       const result = await subscribeToNewsletter(email, ['General Updates'], 'email');
       if (result.success) {
         setStatus('success');
         setEmail('');
+        showToast('Successfully subscribed to MindGrid!', 'success');
       } else {
         setStatus('error');
+        showToast(result.error || 'Failed to subscribe', 'error');
       }
     } catch (err) {
       setStatus('error');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSubmitting(false);
     }
