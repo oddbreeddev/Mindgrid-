@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+// Added missing import for Link
 import { Link } from 'react-router-dom';
 import AdPlaceholder from '../components/AdPlaceholder';
 import SocialBuzzCarousel from '../components/SocialBuzzCarousel';
-import { fetchLatestNews } from '../services/geminiService';
+import { getNews } from '../services/dataService';
 
 const SkeletonArticle: React.FC = () => (
   <div className="animate-pulse flex flex-col md:flex-row gap-6 bg-white p-6 rounded-2xl border border-slate-100">
@@ -20,19 +21,15 @@ const BlogPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [articles, setArticles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(3);
-  const [refreshCooldown, setRefreshCooldown] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(5);
   
   const categories = ['All', 'JAMB', 'WAEC', 'Scholarships', 'University', 'Tech', 'Career'];
 
-  const loadNews = async (isRefresh = false) => {
-    if (isRefresh && refreshCooldown > 0) return;
-    
+  const loadNews = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchLatestNews(activeCategory === 'All' ? 'Nigerian Education' : activeCategory, isRefresh);
+      const data = await getNews(activeCategory);
       setArticles(data);
-      if (isRefresh) setRefreshCooldown(60); // 1 minute cooldown for manual refresh
     } catch (err) {
       console.error(err);
     } finally {
@@ -44,13 +41,6 @@ const BlogPage: React.FC = () => {
     loadNews();
   }, [activeCategory]);
 
-  useEffect(() => {
-    if (refreshCooldown > 0) {
-      const timer = setTimeout(() => setRefreshCooldown(refreshCooldown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [refreshCooldown]);
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="mb-12">
@@ -59,15 +49,23 @@ const BlogPage: React.FC = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-800 mb-2">MindGrid <span className="text-green-600">Daily</span></h1>
-          <p className="text-slate-500">Live academic and tech updates with smart caching.</p>
+          <div className="flex items-center gap-2 mb-1">
+             <h1 className="text-4xl font-black text-slate-800">MindGrid <span className="text-green-600">Live</span></h1>
+             {articles.some(a => a.isRealtime) && (
+               <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded animate-pulse uppercase">Live AI Search</span>
+             )}
+          </div>
+          <p className="text-slate-500 font-medium">Verified updates from the web, curated by AI.</p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           {categories.map(cat => (
             <button 
               key={cat} 
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeCategory === cat ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200'}`}
+              onClick={() => {
+                setActiveCategory(cat);
+                setVisibleCount(5);
+              }}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeCategory === cat ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'bg-white text-slate-600 border border-slate-200 hover:border-green-300'}`}
             >
               {cat}
             </button>
@@ -84,40 +82,74 @@ const BlogPage: React.FC = () => {
           ) : (
             <div className="space-y-10">
               {articles.slice(0, visibleCount).map((post, i) => (
-                <article key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col md:flex-row border border-slate-100 group">
-                  <div className="w-full md:w-64 h-48 bg-slate-100 flex-shrink-0">
-                    <img src={`https://picsum.photos/seed/${post.title}/600/400`} className="w-full h-full object-cover" alt="news" />
+                <article key={i} className="bg-white rounded-[2rem] overflow-hidden shadow-sm flex flex-col md:flex-row border border-slate-100 group animate-in relative" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <div className="w-full md:w-64 h-52 bg-slate-100 flex-shrink-0 relative overflow-hidden">
+                    <img 
+                      src={`https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=600&category=${post.category}&sig=${i}`} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      alt="news" 
+                    />
+                    <div className="absolute top-4 left-4">
+                       <span className="bg-green-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase shadow-lg">{post.category}</span>
+                    </div>
                   </div>
-                  <div className="p-6">
-                    <h2 className="text-xl font-bold text-slate-800 mb-2 line-clamp-2">{post.title}</h2>
-                    <p className="text-slate-500 text-sm line-clamp-2 mb-4">{post.excerpt}</p>
-                    <a href={post.url} target="_blank" className="text-green-600 font-bold text-sm">Read More</a>
+                  <div className="p-8 flex flex-col justify-center">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">{post.date}</span>
+                      {post.isRealtime && <i className="fas fa-bolt text-amber-400 text-xs" title="Real-time update"></i>}
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800 mb-3 leading-tight group-hover:text-green-600 transition-colors">{post.title}</h2>
+                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">{post.excerpt}</p>
+                    <a href={post.url} target="_blank" className="inline-flex items-center gap-3 text-green-600 font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
+                      Read Source <i className="fas fa-arrow-right text-[10px]"></i>
+                    </a>
                   </div>
                 </article>
               ))}
+              
+              {articles.length === 0 && (
+                <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+                   <div className="mb-4 text-slate-200 text-6xl"><i className="fas fa-search"></i></div>
+                   <p className="text-slate-400 font-bold">No live updates found in "{activeCategory}" right now.</p>
+                   <button onClick={loadNews} className="mt-4 text-green-600 font-bold hover:underline">Try Refreshing</button>
+                </div>
+              )}
             </div>
           )}
 
-          <div className="flex flex-col items-center gap-4 py-8">
-            {visibleCount < articles.length && (
-              <button onClick={() => setVisibleCount(v => v + 3)} className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold">Load More</button>
-            )}
-            <button 
-              onClick={() => loadNews(true)}
-              disabled={refreshCooldown > 0 || isLoading}
-              className="text-slate-400 text-sm font-bold hover:text-green-600 disabled:opacity-50 flex items-center gap-2"
-            >
-              <i className={`fas fa-sync-alt ${isLoading ? 'fa-spin' : ''}`}></i>
-              {refreshCooldown > 0 ? `Wait ${refreshCooldown}s to refresh` : 'Force Refresh News'}
-            </button>
-          </div>
+          {!isLoading && visibleCount < articles.length && (
+            <div className="flex justify-center py-8">
+              <button onClick={() => setVisibleCount(v => v + 5)} className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl active:scale-95">
+                Load More Updates
+              </button>
+            </div>
+          )}
         </div>
 
         <aside className="space-y-8">
+          <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+             <h3 className="text-slate-800 font-black text-lg mb-6 flex items-center gap-2">
+               <i className="fas fa-info-circle text-green-600"></i> Why Gemini?
+             </h3>
+             <p className="text-slate-500 text-sm leading-relaxed mb-4">
+               MindGrid uses <strong>Google Search Grounding</strong> to verify all news items. Our AI scans millions of pages to bring you only what matters for Nigerian students.
+             </p>
+             <div className="p-4 bg-green-50 rounded-2xl border border-green-100">
+               <p className="text-xs text-green-700 font-bold italic">"Information is the currency of excellence."</p>
+             </div>
+          </div>
+
           <AdPlaceholder slot="sidebar-top" className="h-[250px]" />
-          <div className="bg-slate-900 p-8 rounded-3xl text-white">
-             <h3 className="font-bold text-xl mb-4">Smart Cache Active</h3>
-             <p className="text-xs text-slate-400 leading-relaxed">To keep this platform free, we refresh news every 4 hours. Manual refreshes are limited to once per minute.</p>
+          
+          <div className="bg-slate-900 p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden group">
+             <div className="relative z-10">
+               <h3 className="font-black text-xl mb-4">Exam Countdown</h3>
+               <p className="text-sm text-slate-400 mb-6">Stay ahead of JAMB and WAEC deadlines. Never miss a registration date again.</p>
+               <Link to="/ai-hub" className="w-full bg-green-600 text-white font-black py-4 rounded-xl hover:bg-green-500 transition-colors block text-center uppercase text-xs tracking-widest">
+                 Ask AI for Deadlines
+               </Link>
+             </div>
+             <i className="fas fa-clock absolute -right-4 -bottom-4 text-8xl text-white/5 transform -rotate-12 group-hover:scale-110 transition-transform"></i>
           </div>
         </aside>
       </div>
