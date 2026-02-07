@@ -88,7 +88,7 @@ const AdminDashboard: React.FC = () => {
     setIsDrafting(true);
     
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: [{ parts: [{ text: `Draft a professional yet engaging newsletter for Nigerian students based on this brief: "${newsletterBrief}".
@@ -107,10 +107,14 @@ const AdminDashboard: React.FC = () => {
           }
         }
       });
-      const data = JSON.parse(response.text || '{}');
+      
+      const text = response.text || '{}';
+      const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      const data = JSON.parse(cleanText);
       setDraft(data);
       showToast('AI Intelligence Draft ready!', 'success');
     } catch (err) {
+      console.error("AI Generation Error:", err);
       showToast('AI Synthesis Failed', 'error');
     } finally {
       setIsDrafting(false);

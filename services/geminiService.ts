@@ -1,8 +1,7 @@
 
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 
-const apiKey = process.env.API_KEY;
-const ai = new GoogleGenAI({ apiKey: apiKey || '' });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 let lastRequestTimestamp = 0;
 const MIN_REQUEST_GAP = 1500;
@@ -18,7 +17,7 @@ const throttle = async () => {
 };
 
 export const isAIConfigured = () => {
-  return !!apiKey && apiKey.length > 10;
+  return !!process.env.API_KEY && process.env.API_KEY.length > 10;
 };
 
 const parseAIResponse = (text: string) => {
