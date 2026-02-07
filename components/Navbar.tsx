@@ -4,7 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 import { useAuth } from '../context/AuthContext';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  onOpenNewsletter: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
@@ -24,17 +28,27 @@ const Navbar: React.FC = () => {
           
           <div className="hidden md:flex items-center space-x-8">
             {NAV_LINKS.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`${
-                  location.pathname === link.path
-                    ? 'text-green-600 border-b-2 border-green-600'
-                    : 'text-slate-600 hover:text-green-600'
-                } px-1 py-2 text-sm font-medium transition-colors`}
-              >
-                {link.label}
-              </Link>
+              link.path === '/newsletter' ? (
+                <button
+                  key={link.path}
+                  onClick={onOpenNewsletter}
+                  className="text-slate-600 hover:text-green-600 text-sm font-medium transition-colors"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`${
+                    location.pathname === link.path
+                      ? 'text-green-600 border-b-2 border-green-600'
+                      : 'text-slate-600 hover:text-green-600'
+                  } px-1 py-2 text-sm font-medium transition-colors`}
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
 
             {isAdmin && (
@@ -89,14 +103,24 @@ const Navbar: React.FC = () => {
         <div className="md:hidden bg-white border-b border-slate-200">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {NAV_LINKS.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-green-600 hover:bg-slate-50"
-              >
-                {link.label}
-              </Link>
+              link.path === '/newsletter' ? (
+                <button
+                  key={link.path}
+                  onClick={() => { onOpenNewsletter(); setIsOpen(false); }}
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-green-600 hover:bg-slate-50"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-green-600 hover:bg-slate-50"
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
             {isAdmin && (
               <Link

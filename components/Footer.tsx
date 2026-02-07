@@ -1,41 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { subscribeToNewsletter } from '../services/dataService';
-import { useToast } from '../context/ToastContext';
 
-const Footer: React.FC = () => {
-  const { showToast } = useToast();
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+interface FooterProps {
+  onOpenNewsletter: () => void;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes('@')) {
-      showToast('Please enter a valid email address', 'error');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const result = await subscribeToNewsletter(email, ['General Updates'], 'email');
-      if (result.success) {
-        setStatus('success');
-        setEmail('');
-        showToast('Successfully subscribed to MindGrid!', 'success');
-      } else {
-        setStatus('error');
-        showToast(result.error || 'Failed to subscribe', 'error');
-      }
-    } catch (err) {
-      setStatus('error');
-      showToast('A network error occurred', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
+const Footer: React.FC<FooterProps> = ({ onOpenNewsletter }) => {
   return (
     <footer className="bg-slate-900 text-slate-300 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,41 +48,17 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Newsletter</h4>
-            <p className="text-sm mb-4">Get the latest exam updates and scholarship alerts.</p>
+            <h4 className="text-white font-semibold mb-4">MindGrid Intelligence</h4>
+            <p className="text-sm mb-6">Join 24,000+ students. Get the latest exam updates and scholarship alerts delivered to your feed.</p>
             
-            {status === 'success' ? (
-              <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 animate-in">
-                <div className="flex items-center gap-2 text-green-400 font-bold text-sm mb-1">
-                  <i className="fas fa-check-circle"></i> Subscribed!
-                </div>
-                <p className="text-[10px] text-slate-400">Welcome to the inner circle.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-                <input 
-                  type="email" 
-                  required
-                  placeholder="Email address" 
-                  className="bg-slate-800 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-600 outline-none transition-all placeholder:text-slate-600"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                />
-                <button 
-                  type="submit"
-                  disabled={isSubmitting || !email}
-                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-2.5 px-4 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-green-900/20 active:scale-95"
-                >
-                  {isSubmitting ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-paper-plane text-xs"></i>}
-                  {isSubmitting ? 'Subscribing...' : 'Subscribe'}
-                </button>
-                {status === 'error' && (
-                  <p className="text-[10px] text-red-400 font-bold text-center mt-2">Failed to join. Please try again.</p>
-                )}
-              </form>
-            )}
-            <p className="text-[9px] text-slate-500 mt-4 uppercase tracking-widest font-bold">24,000+ Students Joined</p>
+            <button 
+              onClick={onOpenNewsletter}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 px-4 rounded-2xl transition-all text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-900/40 active:scale-95"
+            >
+              <i className="fas fa-paper-plane text-[10px]"></i>
+              Activate Alerts
+            </button>
+            <p className="text-[9px] text-slate-500 mt-4 uppercase tracking-[0.2em] font-bold text-center">Verified by AI</p>
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-slate-800 text-center text-xs">

@@ -1,9 +1,10 @@
 
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense, lazy, useState } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
+import NewsletterModal from './components/NewsletterModal';
 
 // Lazy Loaded Pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -60,11 +61,27 @@ const TitleManager: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
+
+  useEffect(() => {
+    // Auto-prompt after 10 seconds if not already subscribed or prompted this session
+    const hasSubscribed = localStorage.getItem('mindgrid_subscribed');
+    const hasBeenPrompted = sessionStorage.getItem('mindgrid_prompted');
+    
+    if (!hasSubscribed && !hasBeenPrompted) {
+      const timer = setTimeout(() => {
+        setIsNewsletterOpen(true);
+        sessionStorage.setItem('mindgrid_prompted', 'true');
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   return (
     <Router>
       <TitleManager />
       <div className="flex flex-col min-h-screen">
-        <Navbar />
+        <Navbar onOpenNewsletter={() => setIsNewsletterOpen(true)} />
         <main className="flex-grow">
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -86,8 +103,9 @@ const App: React.FC = () => {
             </Routes>
           </Suspense>
         </main>
-        <Footer />
+        <Footer onOpenNewsletter={() => setIsNewsletterOpen(true)} />
         <CookieConsent />
+        <NewsletterModal isOpen={isNewsletterOpen} onClose={() => setIsNewsletterOpen(false)} />
       </div>
     </Router>
   );
