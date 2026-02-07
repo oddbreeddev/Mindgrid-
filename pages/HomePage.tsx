@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import AdPlaceholder from '../components/AdPlaceholder';
 import FeatureCarousel from '../components/FeatureCarousel';
+import ShareButton from '../components/ShareButton';
 
 const HomePage: React.FC = () => {
   return (
@@ -20,13 +21,19 @@ const HomePage: React.FC = () => {
           <p className="text-xl md:text-2xl text-slate-300 mb-10 max-w-3xl mx-auto font-light">
             Nigeria's first hybrid platform for academic excellence and tech skills. Master your degree while building your tech stack.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link to="/ai-hub" className="bg-green-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition-all shadow-lg transform hover:-translate-y-1">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Link to="/ai-hub" className="w-full sm:w-auto bg-green-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition-all shadow-lg transform hover:-translate-y-1">
               Start Learning with AI
             </Link>
-            <Link to="/tools" className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all">
+            <Link to="/tools" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border border-white/20 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all">
               Explore Tech Tools
             </Link>
+            <ShareButton 
+              variant="outline"
+              title="MindGrid Nigeria"
+              text="Check out MindGrid! It's a game-changer for Nigerian students with AI tutors and study tools."
+              className="w-full sm:w-auto py-4 px-8 text-white border-white/20 hover:bg-white/10"
+            />
           </div>
         </div>
         {/* Background Patterns */}
@@ -36,7 +43,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* NEW: Feature Showcase Carousel */}
+      {/* Feature Showcase Carousel */}
       <section className="py-8">
         <FeatureCarousel />
       </section>
@@ -91,9 +98,16 @@ const HomePage: React.FC = () => {
                   Freelancing Guides for Students
                 </li>
               </ul>
-              <Link to="/blog" className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold inline-block hover:bg-slate-800 transition-colors">
-                Read Tech Guides
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link to="/blog" className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold inline-block hover:bg-slate-800 transition-colors">
+                  Read Tech Guides
+                </Link>
+                <ShareButton 
+                  title="MindGrid Student Tech Guides"
+                  text="Learning to code while in a Nigerian uni? These MindGrid guides are a life saver."
+                  variant="outline"
+                />
+              </div>
             </div>
             <div className="relative">
               <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800" alt="Tech Hub" className="rounded-3xl shadow-2xl" />
@@ -124,24 +138,48 @@ const HomePage: React.FC = () => {
             <Link to="/blog" className="text-green-600 font-bold hover:underline">View all</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100 relative">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600" className="h-48 w-full object-cover" alt="Article" />
+              <div className="absolute top-4 right-4">
+                <ShareButton 
+                  variant="icon" 
+                  title="Best Affordable Laptops for Students" 
+                  text="Found the best budget laptops for school on MindGrid."
+                  iconOnly
+                />
+              </div>
               <div className="p-6">
                 <span className="text-blue-600 text-xs font-bold uppercase">Tech & Gadgets</span>
                 <h4 className="text-lg font-bold mt-2 mb-3 group-hover:text-green-600 transition-colors">Best Affordable Laptops for Students in 2024</h4>
                 <p className="text-slate-500 text-sm line-clamp-2">Finding the right balance between price and performance for coding and school work...</p>
               </div>
             </div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100 relative">
               <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600" className="h-48 w-full object-cover" alt="Article" />
+              <div className="absolute top-4 right-4">
+                <ShareButton 
+                  variant="icon" 
+                  title="Python vs JavaScript" 
+                  text="Which coding language should a Nigerian student start with?"
+                  iconOnly
+                />
+              </div>
               <div className="p-6">
                 <span className="text-purple-600 text-xs font-bold uppercase">Coding</span>
                 <h4 className="text-lg font-bold mt-2 mb-3 group-hover:text-green-600 transition-colors">Python vs JavaScript: Which should you learn first?</h4>
                 <p className="text-slate-500 text-sm line-clamp-2">A comprehensive guide for Nigerian beginners looking to enter the world of programming...</p>
               </div>
             </div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100 relative">
               <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600" className="h-48 w-full object-cover" alt="Article" />
+              <div className="absolute top-4 right-4">
+                <ShareButton 
+                  variant="icon" 
+                  title="How CS Students get Hired" 
+                  text="The secret to getting hired as a CS student in Nigeria."
+                  iconOnly
+                />
+              </div>
               <div className="p-6">
                 <span className="text-green-600 text-xs font-bold uppercase">University</span>
                 <h4 className="text-lg font-bold mt-2 mb-3 group-hover:text-green-600 transition-colors">How Computer Science Students can get Hired Faster</h4>
@@ -162,9 +200,12 @@ const HomePage: React.FC = () => {
               <Link to="/ai-hub" className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-400 transition-all">
                 Ask AI a Question
               </Link>
-              <Link to="/contact" className="bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-slate-100 transition-all">
-                Join Community
-              </Link>
+              <ShareButton 
+                variant="outline"
+                title="Join MindGrid Nigeria"
+                text="Join me on MindGrid for the best academic tools in Nigeria!"
+                className="bg-white text-slate-900 border-none px-8 py-3"
+              />
             </div>
           </div>
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-green-500/10 rounded-full blur-3xl"></div>

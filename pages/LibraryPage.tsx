@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { getCuratedArticles, saveCuratedArticle } from '../services/dataService';
 import { generateFullArticle, isAIConfigured } from '../services/geminiService';
 import { useAuth } from '../context/AuthContext';
+import ShareButton from '../components/ShareButton';
 
 const SkeletonCard = () => (
   <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm animate-pulse flex flex-col h-full">
@@ -216,12 +217,18 @@ const LibraryPage: React.FC = () => {
                   <span>{new Date(selectedArticle.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
-              <button 
-                onClick={() => setSelectedArticle(null)} 
-                className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm shrink-0"
-              >
-                <i className="fas fa-times text-xl md:text-2xl"></i>
-              </button>
+              <div className="flex items-center gap-2">
+                <ShareButton 
+                  title={selectedArticle.title}
+                  text={`I found this helpful academic guide on MindGrid: ${selectedArticle.excerpt}`}
+                />
+                <button 
+                  onClick={() => setSelectedArticle(null)} 
+                  className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm shrink-0"
+                >
+                  <i className="fas fa-times text-xl md:text-2xl"></i>
+                </button>
+              </div>
             </div>
             
             <div className="flex-grow overflow-y-auto p-6 md:p-20 scroll-smooth bg-white">
@@ -243,7 +250,15 @@ const LibraryPage: React.FC = () => {
                     <p className="text-slate-400 text-xs">Stored in the MindGrid Library for all Nigerian scholars.</p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedArticle(null)} className="w-full md:w-auto bg-white text-slate-900 px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest">Done Reading</button>
+                <div className="flex gap-4 w-full md:w-auto">
+                  <ShareButton 
+                    variant="full"
+                    title={selectedArticle.title}
+                    text={`Sharing this MindGrid guide with you: ${selectedArticle.title}`}
+                    className="flex-grow md:flex-grow-0"
+                  />
+                  <button onClick={() => setSelectedArticle(null)} className="flex-grow md:flex-grow-0 bg-white text-slate-900 px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest">Done</button>
+                </div>
               </div>
             </div>
           </div>
@@ -257,7 +272,11 @@ const DiscoveryCard = ({ article, onClick, i }: any) => (
   <article onClick={onClick} className="bg-white p-6 md:p-8 rounded-[2rem] border-b-4 border-green-500 shadow-sm hover:shadow-xl transition-all cursor-pointer group animate-in h-full flex flex-col" style={{ animationDelay: `${i * 0.1}s` }}>
     <div className="flex justify-between items-start mb-4">
       <div className="bg-green-50 w-12 h-12 rounded-xl flex items-center justify-center text-green-600"><CategoryIcon category={article.category} /></div>
-      <span className="text-[8px] font-black uppercase tracking-widest text-green-600 bg-green-50 px-2 py-1 rounded-full">New Entry</span>
+      <ShareButton 
+        title={article.title}
+        text={`MindGrid Archive: ${article.title}`}
+        variant="ghost"
+      />
     </div>
     <h3 className="text-lg md:text-2xl font-black text-slate-800 mb-3 leading-tight line-clamp-2">{article.title}</h3>
     <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">{article.excerpt}</p>
@@ -272,7 +291,12 @@ const ArchiveCard = ({ article, onClick, i }: any) => (
   <article onClick={onClick} className="bg-white p-5 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-lg transition-all cursor-pointer group animate-in flex flex-col h-full" style={{ animationDelay: `${i * 0.05}s` }}>
     <div className="flex justify-between items-start mb-4">
       <div className="bg-slate-50 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400"><CategoryIcon category={article.category} /></div>
-      <span className="text-[7px] font-black uppercase tracking-widest text-slate-400 px-2 py-0.5 border border-slate-100 rounded-lg">{article.category}</span>
+      <ShareButton 
+        title={article.title}
+        text={`Sharing MindGrid Entry: ${article.title}`}
+        variant="ghost"
+        iconOnly
+      />
     </div>
     <h3 className="text-sm font-black text-slate-800 mb-2 line-clamp-2">{article.title}</h3>
     <p className="text-slate-500 text-[10px] leading-relaxed line-clamp-3 flex-grow">{article.excerpt}</p>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import AdPlaceholder from '../components/AdPlaceholder';
 import SocialBuzzCarousel from '../components/SocialBuzzCarousel';
 import { getNews } from '../services/dataService';
+import ShareButton from '../components/ShareButton';
 
 const SkeletonArticle: React.FC = () => (
   <div className="animate-pulse flex flex-col md:flex-row gap-6 bg-white p-6 rounded-2xl border border-slate-100">
@@ -23,7 +24,6 @@ const BlogPage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(5);
   
   const categories = ['All', 'JAMB', 'WAEC', 'Scholarships', 'University', 'Tech', 'Career'];
-  const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=800";
 
   const cleanText = (text: string) => {
     if (!text) return "";
@@ -110,24 +110,30 @@ const BlogPage: React.FC = () => {
                   <div className="p-8 flex flex-col justify-center">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">{post.date}</span>
-                      {post.isRealtime && <i className="fas fa-bolt text-amber-400 text-xs"></i>}
+                      <ShareButton 
+                        variant="ghost" 
+                        title={cleanText(post.title)} 
+                        text={`Latest Update from MindGrid: ${cleanText(post.title)}`}
+                        url={post.url}
+                        iconOnly
+                      />
                     </div>
                     <h2 className="text-2xl font-black text-slate-800 mb-3 leading-tight group-hover:text-green-600 transition-colors">{cleanText(post.title)}</h2>
                     <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">{cleanText(post.excerpt)}</p>
-                    <a href={post.url} target="_blank" className="inline-flex items-center gap-3 text-green-600 font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
-                      Read Source <i className="fas fa-arrow-right text-[10px]"></i>
-                    </a>
+                    <div className="flex items-center gap-6">
+                      <a href={post.url} target="_blank" className="inline-flex items-center gap-3 text-green-600 font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
+                        Read Source <i className="fas fa-arrow-right text-[10px]"></i>
+                      </a>
+                      <ShareButton 
+                        variant="outline"
+                        title={post.title}
+                        text={`Important student update: ${post.title}`}
+                        url={post.url}
+                      />
+                    </div>
                   </div>
                 </article>
               ))}
-              
-              {!isLoading && articles.length === 0 && (
-                <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
-                   <div className="mb-4 text-slate-200 text-6xl"><i className="fas fa-search"></i></div>
-                   <p className="text-slate-400 font-bold">No live updates found in "{activeCategory}" right now.</p>
-                   <button onClick={loadData} className="mt-4 text-green-600 font-bold hover:underline">Try Refreshing</button>
-                </div>
-              )}
             </div>
           )}
 
@@ -158,9 +164,15 @@ const BlogPage: React.FC = () => {
              <h3 className="text-slate-800 font-black text-lg mb-6 flex items-center gap-2">
                <i className="fas fa-info-circle text-green-600"></i> AI Verification
              </h3>
-             <p className="text-slate-500 text-sm leading-relaxed mb-4">
-               MindGrid uses <strong>Google Search Grounding</strong> to verify all news items. Our AI scans millions of pages to bring you only what matters for Nigerian students.
+             <p className="text-slate-500 text-sm leading-relaxed mb-6">
+               MindGrid uses <strong>Google Search Grounding</strong> to verify all news items. Our AI scans millions of pages to bring you only what matters.
              </p>
+             <ShareButton 
+               variant="outline"
+               title="MindGrid Intelligence"
+               text="Check out MindGrid for real-time Nigerian academic news and AI study tools!"
+               className="w-full"
+             />
           </div>
         </aside>
       </div>
