@@ -176,7 +176,8 @@ const AIHub: React.FC = () => {
                     className="absolute -right-4 -bottom-4 bg-white shadow-xl w-10 h-10 rounded-2xl flex items-center justify-center text-blue-600 hover:scale-110 transition-transform border border-slate-100 z-10"
                     title="Read aloud"
                   >
-                    <i className={`fas ${isSpeaking === index ? 'fa-pause text-xs' : 'fa-volume-up text-sm'}`}></i>
+                    {/* Fix: Changed 'index' to 'idx' to match mapping parameter */}
+                    <i className={`fas ${isSpeaking === idx ? 'fa-pause text-xs' : 'fa-volume-up text-sm'}`}></i>
                   </button>
                 )}
               </div>
