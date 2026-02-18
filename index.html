@@ -6,60 +6,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>MindGrid | Nigerian Student Resource Hub & AI Tutor</title>
   
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5345604333370357" crossorigin="anonymous"></script>
-  <meta name="google-adsense-account" content="ca-pub-5345604333370357">
-
-  <!-- SEO & Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#16a34a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
   <!-- Primary Meta Tags -->
   <meta name="title" content="MindGrid | Nigerian Student Resource Hub & AI Tutor">
-  <meta name="description" content="The ultimate platform for Nigerian students. CGPA calculators, JAMB/WAEC updates, AI-powered tutoring, and tech career roadmaps. Excellence starts here.">
-  <meta name="keywords" content="JAMB 2024, WAEC, Nigerian Universities, CGPA Calculator, AI Tutor, Nigerian Tech Careers, Scholarships for Nigerians">
+  <meta name="description" content="The ultimate hybrid platform for Nigerian students. Master JAMB/WAEC syllabus while building your tech career with AI-powered tutoring and roadmap tools.">
+  <meta name="keywords" content="JAMB, WAEC, Nigerian Students, CGPA Calculator, Tech Roadmaps, AI Tutor, UNILAG, UI, ABU, Post-UTME prep">
   <meta name="author" content="MindGrid Nigeria">
-  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://mindgrid.com.ng/" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mindgrid.com.ng/">
-  <meta property="og:title" content="MindGrid | Nigerian Student Resource Hub">
-  <meta property="og:description" content="Empowering Nigerian students with AI-powered study tools and career guidance.">
-  <meta property="og:image" content="https://mindgrid.com.ng/og-image.jpg">
+  <meta property="og:title" content="MindGrid | Nigerian Student Resource Hub & AI Tutor">
+  <meta property="og:description" content="The ultimate hybrid platform for Nigerian students. Master JAMB/WAEC syllabus while building your tech career.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=1200">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://mindgrid.com.ng/">
-  <meta property="twitter:title" content="MindGrid | Nigerian Student Resource Hub">
-  <meta property="twitter:description" content="Empowering Nigerian students with AI-powered study tools and career guidance.">
-  <meta property="twitter:image" content="https://mindgrid.com.ng/og-image.jpg">
+  <meta property="twitter:title" content="MindGrid | Nigerian Student Resource Hub & AI Tutor">
+  <meta property="twitter:description" content="Master JAMB/WAEC while building your tech career with AI-powered tutoring.">
+  <meta property="twitter:image" content="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=1200">
 
-  <!-- Favicon: Custom SVG matching Navbar logo -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2316a34a'/%3E%3Cpath d='M50 22c-12.1 0-22 9.9-22 22 0 3.2.7 6.2 1.9 8.9C27.3 55.4 26 59.5 26 64c0 7.7 6.3 14 14 14h20c7.7 0 14-6.3 14-14 0-4.5-1.3-8.6-3.9-11.1 1.2-2.7 1.9-5.7 1.9-8.9 0-12.1-9.9-22-22-22zm-4 40c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm0-10c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm8 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z' fill='white'/%3E%3C/svg%3E">
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "MindGrid Nigeria",
+    "url": "https://mindgrid.com.ng",
+    "logo": "https://mindgrid.com.ng/icon.svg",
+    "sameAs": [
+      "https://twitter.com/mindgridng",
+      "https://instagram.com/mindgridng"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+234-800-MIND-GRID",
+      "contactType": "customer service"
+    }
+  }
+  </script>
 
+  <!-- PWA & Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       scroll-behavior: smooth;
-      -webkit-tap-highlight-color: transparent;
+      background-color: #050505;
+      color: #f8fafc;
+      margin: 0;
     }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Animation for lazy loaded items */
+    .selection-blue::selection {
+      background-color: #2563eb;
+      color: white;
+    }
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-in {
-      animation: fadeInUp 0.5s ease forwards;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+    /* Smooth Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
   </style>
 <script type="importmap">
 {
@@ -68,6 +88,7 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.454.0",
     "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
     "vite": "https://esm.sh/vite@^7.3.1",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3",
@@ -78,9 +99,8 @@
 }
 </script>
 </head>
-<body class="bg-slate-50 text-slate-900 selection:bg-green-100 selection:text-green-900">
+<body class="selection-blue">
   <div id="root"></div>
-  <!-- Entry point for Vite -->
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>

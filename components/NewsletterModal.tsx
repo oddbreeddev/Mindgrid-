@@ -53,12 +53,11 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in">
+    <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-in">
       <div 
         className="bg-white w-full md:max-w-xl md:rounded-[3rem] rounded-t-[2.5rem] overflow-hidden shadow-2xl relative animate-in slide-in-from-bottom md:slide-in-from-bottom-0"
         style={{ animationDuration: '0.4s' }}
       >
-        {/* Close Button */}
         <button 
           onClick={onClose}
           className="absolute top-6 right-6 w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-all z-20"
@@ -68,10 +67,10 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
 
         <div className="p-8 md:p-12">
           <div className="text-center mb-8">
-            <div className="bg-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-xl shadow-green-200">
+            <div className="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-xl shadow-blue-200">
               <i className="fas fa-paper-plane"></i>
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Join the <span className="text-green-600">Inner Circle</span></h2>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Join the <span className="text-blue-600">Inner Circle</span></h2>
             <p className="text-slate-500 text-sm mt-2 font-medium">Get JAMB alerts, scholarships, and tech jobs first.</p>
           </div>
 
@@ -87,7 +86,7 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
               <button 
                 type="button"
                 onClick={() => setPlatform('whatsapp')}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${platform === 'whatsapp' ? 'bg-white text-green-600 shadow-sm' : 'text-slate-400'}`}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${platform === 'whatsapp' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
               >
                 WhatsApp
               </button>
@@ -97,31 +96,15 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
               type={platform === 'email' ? 'email' : 'tel'}
               required
               placeholder={platform === 'email' ? 'Enter your email' : '+234 Phone Number'}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 font-medium text-slate-700"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-medium text-slate-700"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <div className="space-y-3">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">I am interested in:</p>
-              <div className="flex flex-wrap gap-2">
-                {categories.map(cat => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => toggleInterest(cat.id)}
-                    className={`px-4 py-2 rounded-full border text-[10px] font-bold uppercase tracking-wider transition-all ${interests.includes(cat.id) ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-500 hover:border-slate-300'}`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <button 
               type="submit"
               disabled={isSubmitting || !email}
-              className="w-full bg-green-600 text-white font-black py-5 rounded-2xl hover:bg-green-700 transition-all shadow-xl shadow-green-200 active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]"
+              className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]"
             >
               {isSubmitting ? <i className="fas fa-spinner fa-spin mr-2"></i> : 'Activate Alerts'}
             </button>

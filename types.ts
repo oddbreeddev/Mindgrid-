@@ -27,3 +27,33 @@ export interface GradeScale {
   grade: string;
   point: number;
 }
+
+export interface SyllabusTopic {
+  id: string;
+  title: string;
+}
+
+export interface SyllabusSubject {
+  name: string;
+  icon: string;
+  topics: SyllabusTopic[];
+}
+
+export interface LessonContent {
+  subject: string;
+  topic: string;
+  theory: string;
+  examples: string;
+  naijaContext: string;
+  quiz: {
+    question: string;
+    options: string[];
+    answer: number;
+    explanation: string;
+  }[];
+}
+
+export interface UserProgress {
+  topic_id: string;
+  completed_at: string;
+}

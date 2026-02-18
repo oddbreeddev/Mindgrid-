@@ -126,13 +126,13 @@ const AIHub: React.FC = () => {
       <div className="bg-white rounded-[2.5rem] shadow-2xl flex-grow flex flex-col overflow-hidden border border-slate-100">
         <div className="bg-slate-900 p-6 text-white flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="bg-green-600 p-3 rounded-2xl shadow-lg shadow-green-500/30">
+            <div className="bg-blue-600 p-3 rounded-2xl shadow-lg shadow-blue-500/30">
               <i className="fas fa-graduation-cap text-xl"></i>
             </div>
             <div>
-              <h1 className="font-black text-lg tracking-tight">MindGrid <span className="text-green-500">Tutor</span></h1>
+              <h1 className="font-black text-lg tracking-tight">MindGrid <span className="text-blue-500">Tutor</span></h1>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
                 <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">Academic Mode</span>
               </div>
             </div>
@@ -140,7 +140,7 @@ const AIHub: React.FC = () => {
           <div className="flex items-center gap-3">
              <button 
               onClick={() => setUseSearch(!useSearch)}
-              className={`text-[10px] font-black px-4 py-2 rounded-xl uppercase transition-all flex items-center gap-2 ${useSearch ? 'bg-green-600 text-white shadow-lg' : 'bg-white/10 text-slate-400'}`}
+              className={`text-[10px] font-black px-4 py-2 rounded-xl uppercase transition-all flex items-center gap-2 ${useSearch ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/10 text-slate-400'}`}
             >
               <i className="fas fa-globe"></i> {useSearch ? 'Grounding On' : 'Search Off'}
             </button>
@@ -171,7 +171,7 @@ const AIHub: React.FC = () => {
                 {msg.role === 'assistant' && (
                   <button 
                     onClick={() => playAudio(msg.text, idx)}
-                    className="absolute -right-4 -bottom-4 bg-white shadow-xl w-10 h-10 rounded-2xl flex items-center justify-center text-green-600 hover:scale-110 transition-transform border border-slate-100 z-10"
+                    className="absolute -right-4 -bottom-4 bg-white shadow-xl w-10 h-10 rounded-2xl flex items-center justify-center text-blue-600 hover:scale-110 transition-transform border border-slate-100 z-10"
                     title="Read aloud"
                   >
                     <i className={`fas ${isSpeaking === idx ? 'fa-pause text-xs' : 'fa-volume-up text-sm'}`}></i>
@@ -183,7 +183,7 @@ const AIHub: React.FC = () => {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="text-[10px] text-slate-400 font-bold uppercase py-1 px-1">Sources:</span>
                   {msg.sources.map((s, i) => (
-                    <a key={i} href={s.uri} target="_blank" className="text-[10px] font-black text-green-700 bg-green-50 px-3 py-1.5 rounded-xl border border-green-100 hover:bg-green-100 transition-all flex items-center gap-1">
+                    <a key={i} href={s.uri} target="_blank" className="text-[10px] font-black text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100 hover:bg-blue-100 transition-all flex items-center gap-1">
                       <i className="fas fa-link text-[8px]"></i> {s.title}
                     </a>
                   ))}
@@ -195,9 +195,9 @@ const AIHub: React.FC = () => {
             <div className="flex justify-start">
               <div className="bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
                 <div className="flex gap-1.5">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-200"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200"></div>
                 </div>
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Researching...</span>
               </div>
@@ -212,7 +212,7 @@ const AIHub: React.FC = () => {
               type="text"
               placeholder={cooldown > 0 ? `Please wait ${cooldown}s...` : "Ask about JAMB Syllabus, Physics, or Career paths..."}
               disabled={cooldown > 0 || configError}
-              className="flex-grow bg-slate-50 border border-slate-200 rounded-[1.5rem] px-6 py-5 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 disabled:opacity-50 font-medium transition-all text-slate-700 shadow-inner"
+              className="flex-grow bg-slate-50 border border-slate-200 rounded-[1.5rem] px-6 py-5 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 disabled:opacity-50 font-medium transition-all text-slate-700 shadow-inner"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -220,7 +220,7 @@ const AIHub: React.FC = () => {
             <button
               onClick={handleSend}
               disabled={isLoading || !input.trim() || cooldown > 0 || configError}
-              className="bg-slate-900 text-white w-16 h-16 rounded-[1.5rem] flex items-center justify-center hover:bg-green-600 transition-all shadow-xl disabled:opacity-50 active:scale-95 group"
+              className="bg-slate-950 text-white w-16 h-16 rounded-[1.5rem] flex items-center justify-center hover:bg-blue-600 transition-all shadow-xl disabled:opacity-50 active:scale-95 group"
             >
               <i className="fas fa-paper-plane text-xl group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
             </button>

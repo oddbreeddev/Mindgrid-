@@ -32,6 +32,36 @@ export const subscribeToNewsletter = async (email: string, interests: string[], 
   }
 };
 
+// Lesson Caching Functions
+export const getCachedLesson = async (subject: string, topic: string) => {
+  try {
+    const key = `${subject}:${topic}`.toLowerCase();
+    const { data, error } = await supabase
+      .from('lessons_cache')
+      .select('content')
+      .eq('subject_topic_key', key)
+      .maybeSingle();
+    
+    if (error) throw error;
+    return data?.content || null;
+  } catch (e) {
+    console.error("Cache Fetch Error:", e);
+    return null;
+  }
+};
+
+export const saveLessonToCache = async (subject: string, topic: string, content: any) => {
+  try {
+    const key = `${subject}:${topic}`.toLowerCase();
+    await supabase.from('lessons_cache').upsert({
+      subject_topic_key: key,
+      content: content
+    }, { onConflict: 'subject_topic_key' });
+  } catch (e) {
+    console.error("Cache Save Error:", e);
+  }
+};
+
 // Admin Service: Log a new broadcast campaign
 export const logBroadcast = async (title: string, content: string, reach: number) => {
   try {

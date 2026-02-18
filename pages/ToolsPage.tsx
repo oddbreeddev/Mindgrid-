@@ -18,7 +18,15 @@ const ToolsPage: React.FC = () => {
       icon: 'fa-calendar-alt',
       path: '/tools/timetable',
       color: 'bg-green-600',
-      tag: 'New'
+      tag: 'Planning'
+    },
+    {
+      title: 'Admissions Navigator',
+      description: 'Check subject combinations and departmental cutoff marks for any course.',
+      icon: 'fa-compass',
+      path: '/tools/course-finder',
+      color: 'bg-amber-500',
+      tag: 'Admissions'
     },
     {
       title: 'Tech Roadmaps',
@@ -45,7 +53,7 @@ const ToolsPage: React.FC = () => {
         <p className="text-slate-500 max-w-2xl mx-auto text-lg font-medium">Tools designed to simplify your academic life and fast-track your tech career.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {tools.map((tool, idx) => (
           <Link 
             key={idx}
@@ -62,10 +70,10 @@ const ToolsPage: React.FC = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{tool.tag}</span>
             </div>
             
-            <h3 className="text-2xl font-black text-slate-900 mb-3 leading-tight">{tool.title}</h3>
-            <p className="text-slate-500 text-sm mb-8 leading-relaxed font-medium">{tool.description}</p>
+            <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight">{tool.title}</h3>
+            <p className="text-slate-500 text-xs mb-8 leading-relaxed font-medium">{tool.description}</p>
             
-            <div className="mt-auto flex items-center gap-2 text-slate-900 font-bold text-sm group-hover:text-green-600 transition-colors">
+            <div className="mt-auto flex items-center gap-2 text-slate-900 font-bold text-xs group-hover:text-green-600 transition-colors">
               Launch Tool <i className="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
             </div>
           </Link>

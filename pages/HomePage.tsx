@@ -1,216 +1,262 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import AdPlaceholder from '../components/AdPlaceholder';
+import { Share2, Terminal, Cpu, Sparkles, ChevronRight } from 'lucide-react';
 import FeatureCarousel from '../components/FeatureCarousel';
-import ShareButton from '../components/ShareButton';
 
 const HomePage: React.FC = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="space-y-16 pb-16">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 text-white py-24 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-green-300 text-sm font-bold mb-8 border border-white/10">
-            <span className="flex h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
-            New: Tech Career Roadmaps for 2024
-          </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight">
-            Education meets <span className="text-green-400">Innovation</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-slate-300 mb-10 max-w-3xl mx-auto font-light">
-            Nigeria's first hybrid platform for academic excellence and tech skills. Master your degree while building your tech stack.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Link to="/ai-hub" className="w-full sm:w-auto bg-green-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition-all shadow-lg transform hover:-translate-y-1">
-              Start Learning with AI
-            </Link>
-            <Link to="/tools" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border border-white/20 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all">
-              Explore Tech Tools
-            </Link>
-            <ShareButton 
-              variant="outline"
-              title="MindGrid Nigeria"
-              text="Check out MindGrid! It's a game-changer for Nigerian students with AI tutors and study tools."
-              className="w-full sm:w-auto py-4 px-8 text-white border-white/20 hover:bg-white/10"
-            />
-          </div>
+    <div className="space-y-0 overflow-x-hidden bg-[#050505]">
+      {/* Hero Section - Padding adjusted to eliminate extra space */}
+      <section className="relative min-h-[85vh] flex items-center bg-[#050505] pt-0 pb-12 overflow-hidden">
+        {/* Background Decorative Grid */}
+        <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" 
+             style={{ backgroundImage: 'radial-gradient(#1e40af 0.5px, transparent 0.5px)', backgroundSize: '40px 40px' }}>
         </div>
-        {/* Background Patterns */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-green-500 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-10 right-10 w-64 h-64 bg-blue-500 rounded-full blur-[120px]"></div>
+        
+        <div className="max-w-7xl mx-auto px-8 relative z-10 w-full">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-24">
+            
+            {/* Left Side: High-Detail Animated SVG Laptop (Top on Mobile) */}
+            <div className="flex-1 w-full max-w-[600px] lg:max-w-none order-1 lg:order-1 flex justify-center items-center relative animate-in">
+              {/* Ambient Background Glows */}
+              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-600/10 blur-[120px] transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}></div>
+              
+              <svg 
+                viewBox="0 0 140 120" 
+                className="w-full h-auto drop-shadow-[0_0_30px_rgba(59,130,246,0.3)] filter contrast-125"
+              >
+                <style>
+                  {`
+                    .draw-path {
+                      stroke-dasharray: 600;
+                      stroke-dashoffset: 600;
+                      transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .animate-draw {
+                      stroke-dashoffset: 0;
+                    }
+                    .flicker {
+                      animation: laptopFlicker 6s infinite;
+                    }
+                    @keyframes laptopFlicker {
+                      0%, 100% { opacity: 0.8; filter: brightness(1); }
+                      50% { opacity: 1; filter: brightness(1.3); }
+                    }
+                  `}
+                </style>
+
+                {/* 3D DEPTH: Side walls of the laptop base */}
+                <path 
+                  className={`draw-path ${isLoaded ? 'animate-draw' : ''}`}
+                  style={{ transitionDelay: '0.8s' }}
+                  d="M5 95 L5 100 L135 100 L135 95" 
+                  fill="none" 
+                  stroke="#1d4ed8" 
+                  strokeWidth="0.5" 
+                />
+                <path 
+                  className={`draw-path ${isLoaded ? 'animate-draw' : ''}`}
+                  style={{ transitionDelay: '0.9s' }}
+                  d="M5 100 L135 100" 
+                  fill="none" 
+                  stroke="#1d4ed8" 
+                  strokeWidth="0.2" 
+                  strokeOpacity="0.5"
+                />
+
+                {/* Laptop Screen Frame */}
+                <path 
+                  className={`draw-path ${isLoaded ? 'animate-draw' : ''}`}
+                  d="M25 20 H115 V75 H25 Z" 
+                  fill="none" 
+                  stroke="#3b82f6" 
+                  strokeWidth="1.2" 
+                  strokeLinejoin="round"
+                />
+                
+                {/* Screen Content Area */}
+                <rect 
+                  x="28" y="23" width="84" height="49" 
+                  fill={isLoaded ? "rgba(59,130,246,0.08)" : "transparent"}
+                  className="transition-all duration-1000 delay-[2000ms] flicker"
+                />
+
+                {/* Laptop Base / Top Deck */}
+                <path 
+                  className={`draw-path ${isLoaded ? 'animate-draw' : ''}`}
+                  style={{ transitionDelay: '0.4s' }}
+                  d="M25 75 L5 95 H135 L115 75 Z" 
+                  fill="none" 
+                  stroke="#3b82f6" 
+                  strokeWidth="1.2" 
+                  strokeLinejoin="round"
+                />
+
+                {/* KEYBOARD GRID: High realism keys */}
+                <g className={`draw-path ${isLoaded ? 'animate-draw' : ''}`} style={{ transitionDelay: '1.2s' }}>
+                  <path d="M18 82 H122 M14 87 H126 M10 92 H130" fill="none" stroke="#3b82f6" strokeWidth="0.3" strokeOpacity="0.4" />
+                  <path d="M35 78 L25 95 M50 78 L45 95 M65 78 L65 95 M80 78 L85 95 M95 78 L105 95 M110 78 L125 95" fill="none" stroke="#3b82f6" strokeWidth="0.3" strokeOpacity="0.4" />
+                  <path d="M60 92 L58 95 H82 L80 92 Z" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeOpacity="0.7" />
+                </g>
+
+                {/* Hinge detail */}
+                <path 
+                  className={`draw-path ${isLoaded ? 'animate-draw' : ''}`}
+                  style={{ transitionDelay: '0.6s' }}
+                  d="M30 75 H110" 
+                  fill="none" 
+                  stroke="#1e40af" 
+                  strokeWidth="2" 
+                  strokeLinecap="round"
+                />
+                
+                {/* Screen Graphics */}
+                {isLoaded && (
+                  <g className="opacity-0 animate-[fadeIn_1s_ease-out_2.5s_forwards]">
+                    <rect x="35" y="30" width="20" height="2" rx="1" fill="#3b82f6" fillOpacity="0.6" />
+                    <rect x="35" y="35" width="35" height="2" rx="1" fill="#3b82f6" fillOpacity="0.4" />
+                    <rect x="35" y="40" width="15" height="2" rx="1" fill="#3b82f6" fillOpacity="0.5" />
+                    
+                    <text x="70" y="62" fontSize="5" fill="#3b82f6" textAnchor="middle" className="font-mono font-bold tracking-widest uppercase" style={{ fontFamily: 'monospace' }}>
+                      MINDGRID OS v2.4
+                    </text>
+                    
+                    <circle cx="70" cy="21.5" r="0.5" fill="#3b82f6" />
+                  </g>
+                )}
+              </svg>
+            </div>
+
+            {/* Right Side: Content (Bottom on Mobile) */}
+            <div className="flex-1 space-y-6 text-center lg:text-left order-2 lg:order-2 z-10 animate-in" style={{ animationDelay: '0.2s' }}>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium animate-pulse">
+                <Sparkles size={14} />
+                <span>New: Tech Career Roadmaps for 2026</span>
+              </div>
+
+              <h1 className="text-5xl lg:text-8xl font-black leading-[1.1] tracking-tight text-white">
+                Education <br />
+                meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">Innovation</span>
+              </h1>
+
+              <p className="text-gray-400 text-lg lg:text-xl max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+                Nigeria's first hybrid platform for academic excellence and tech skills. 
+                Master your degree while building your industry-standard tech stack.
+              </p>
+
+              {/* CTA Buttons - Side by Side */}
+              <div className="flex flex-row gap-3 justify-center lg:justify-start pt-2">
+                <Link to="/study" className="group px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-xl shadow-blue-500/25 whitespace-nowrap">
+                  <Terminal size={18} />
+                  Start Learning
+                  <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+                
+                <Link to="/tools" className="px-5 py-3 bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                  Explore Tools
+                </Link>
+              </div>
+
+              <div className="flex items-center justify-center lg:justify-start gap-6 pt-2">
+                <button className="flex items-center gap-2 text-gray-500 hover:text-blue-400 transition-colors text-[10px] uppercase tracking-[0.2em] font-bold">
+                  <Share2 size={14} />
+                  Share Platform
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Feature Showcase Carousel */}
-      <section className="py-8">
+      {/* Track Selection Section - No extra top margin to stay close to hero */}
+      <section className="py-24 bg-[#0a0a0a] border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">Your Dual <span className="text-blue-600">Roadmap.</span></h2>
+            <p className="text-gray-400 text-lg font-medium max-w-xl mx-auto">Excel in your degree. Dominate the tech industry.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Academic Path */}
+            <Link to="/study" className="group relative bg-white/5 rounded-[3rem] border border-white/5 p-12 overflow-hidden shadow-2xl hover:border-blue-500/30 transition-all duration-500">
+              <div className="relative z-10 space-y-8">
+                <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl group-hover:rotate-6 transition-transform">
+                  <i className="fas fa-book-bookmark"></i>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black text-white">Academic Mastery</h3>
+                  <p className="text-gray-400 text-base mt-2">JAMB syllabus coverage, WAEC prep, and university honors tracking.</p>
+                </div>
+                <div className="pt-4">
+                  <span className="bg-white text-black px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest group-hover:bg-blue-600 group-hover:text-white transition-all">Launch Hub</span>
+                </div>
+              </div>
+              <i className="fas fa-graduation-cap absolute -right-12 -bottom-12 text-[18rem] text-white/5 -rotate-12 group-hover:scale-110 transition-transform duration-700 pointer-events-none"></i>
+            </Link>
+
+            {/* Tech Career Path */}
+            <Link to="/study" className="group relative bg-blue-700 rounded-[3rem] p-12 overflow-hidden shadow-2xl hover:-translate-y-1 transition-all duration-500">
+              <div className="relative z-10 space-y-8 text-white">
+                <div className="w-20 h-20 bg-[#050505] text-white rounded-2xl flex items-center justify-center text-4xl group-hover:rotate-6 transition-transform">
+                  <Terminal size={32} />
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black">Tech Career</h3>
+                  <p className="text-blue-100/70 text-base mt-2">Step-by-step roadmaps for Software Engineering, UI/UX, and AI.</p>
+                </div>
+                <div className="pt-4">
+                  <span className="bg-[#050505] text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest group-hover:bg-white group-hover:text-black transition-all">Start Coding</span>
+                </div>
+              </div>
+              <i className="fas fa-microchip absolute -right-12 -bottom-12 text-[18rem] text-white/5 -rotate-12 group-hover:scale-110 transition-transform duration-700 pointer-events-none"></i>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Section */}
+      <section className="bg-[#050505] py-24">
+        <div className="text-center mb-16">
+          <span className="text-blue-500 font-black text-[10px] uppercase tracking-[0.5em] block mb-2">Core Intelligence</span>
+          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter">Everything to <span className="text-blue-600 italic">Win.</span></h2>
+        </div>
         <FeatureCarousel />
       </section>
 
-      {/* Tech Skills Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-slate-800">Master Tech Skills</h2>
-          <p className="text-slate-500">Kickstart your career in the Nigerian tech ecosystem.</p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { name: 'UI/UX Design', icon: 'fa-bezier-curve', color: 'text-pink-500', bg: 'bg-pink-50' },
-            { name: 'Web Dev', icon: 'fa-code', color: 'text-blue-500', bg: 'bg-blue-50' },
-            { name: 'Data Science', icon: 'fa-chart-pie', color: 'text-purple-500', bg: 'bg-purple-50' },
-            { name: 'Cybersecurity', icon: 'fa-shield-halved', color: 'text-red-500', bg: 'bg-red-50' },
-          ].map((skill, idx) => (
-            <div key={idx} className={`${skill.bg} p-6 rounded-2xl flex flex-col items-center text-center group cursor-pointer hover:shadow-md transition-all`}>
-              <i className={`fas ${skill.icon} ${skill.color} text-3xl mb-4 group-hover:scale-110 transition-transform`}></i>
-              <span className="font-bold text-slate-800 text-sm">{skill.name}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Ad Space */}
-      <div className="max-w-7xl mx-auto px-4">
-        <AdPlaceholder slot="top-banner" />
-      </div>
-
-      {/* Featured Content Tabs */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="text-green-600 font-bold text-sm tracking-widest uppercase mb-4 block">MindGrid Tech</span>
-              <h2 className="text-4xl font-black text-slate-900 mb-6 leading-tight">Build for the World from <span className="underline decoration-green-400">Yaba</span> to Silicon Valley.</h2>
-              <p className="text-slate-600 text-lg mb-8">
-                We provide curated coding resources, local dev community links, and tutorials on how to monetize your tech skills while still in school.
-              </p>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-700">
-                  <i className="fas fa-check-circle text-green-500"></i>
-                  Student Developer Roadmaps
-                </li>
-                <li className="flex items-center gap-3 text-slate-700">
-                  <i className="fas fa-check-circle text-green-500"></i>
-                  Nigerian Tech Internship Alerts
-                </li>
-                <li className="flex items-center gap-3 text-slate-700">
-                  <i className="fas fa-check-circle text-green-500"></i>
-                  Freelancing Guides for Students
-                </li>
-              </ul>
-              <div className="flex items-center gap-4">
-                <Link to="/blog" className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold inline-block hover:bg-slate-800 transition-colors">
-                  Read Tech Guides
-                </Link>
-                <ShareButton 
-                  title="MindGrid Student Tech Guides"
-                  text="Learning to code while in a Nigerian uni? These MindGrid guides are a life saver."
-                  variant="outline"
-                />
-              </div>
-            </div>
-            <div className="relative">
-              <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800" alt="Tech Hub" className="rounded-3xl shadow-2xl" />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden md:block">
-                <div className="flex items-center gap-4">
-                  <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center text-green-600">
-                    <i className="fas fa-terminal"></i>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Coding Tip</p>
-                    <p className="font-bold text-slate-800">Learn React in 30 Days</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Latest Blog Posts Section */}
-      <section className="bg-slate-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-800">Trending Now</h2>
-              <p className="text-slate-500">Top stories in Academics and Tech.</p>
-            </div>
-            <Link to="/blog" className="text-green-600 font-bold hover:underline">View all</Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100 relative">
-              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600" className="h-48 w-full object-cover" alt="Article" />
-              <div className="absolute top-4 right-4">
-                <ShareButton 
-                  variant="icon" 
-                  title="Best Affordable Laptops for Students" 
-                  text="Found the best budget laptops for school on MindGrid."
-                  iconOnly
-                />
-              </div>
-              <div className="p-6">
-                <span className="text-blue-600 text-xs font-bold uppercase">Tech & Gadgets</span>
-                <h4 className="text-lg font-bold mt-2 mb-3 group-hover:text-green-600 transition-colors">Best Affordable Laptops for Students in 2024</h4>
-                <p className="text-slate-500 text-sm line-clamp-2">Finding the right balance between price and performance for coding and school work...</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100 relative">
-              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600" className="h-48 w-full object-cover" alt="Article" />
-              <div className="absolute top-4 right-4">
-                <ShareButton 
-                  variant="icon" 
-                  title="Python vs JavaScript" 
-                  text="Which coding language should a Nigerian student start with?"
-                  iconOnly
-                />
-              </div>
-              <div className="p-6">
-                <span className="text-purple-600 text-xs font-bold uppercase">Coding</span>
-                <h4 className="text-lg font-bold mt-2 mb-3 group-hover:text-green-600 transition-colors">Python vs JavaScript: Which should you learn first?</h4>
-                <p className="text-slate-500 text-sm line-clamp-2">A comprehensive guide for Nigerian beginners looking to enter the world of programming...</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm group border border-slate-100 relative">
-              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600" className="h-48 w-full object-cover" alt="Article" />
-              <div className="absolute top-4 right-4">
-                <ShareButton 
-                  variant="icon" 
-                  title="How CS Students get Hired" 
-                  text="The secret to getting hired as a CS student in Nigeria."
-                  iconOnly
-                />
-              </div>
-              <div className="p-6">
-                <span className="text-green-600 text-xs font-bold uppercase">University</span>
-                <h4 className="text-lg font-bold mt-2 mb-3 group-hover:text-green-600 transition-colors">How Computer Science Students can get Hired Faster</h4>
-                <p className="text-slate-500 text-sm line-clamp-2">Moving beyond the classroom syllabus and building a professional portfolio in Lagos...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="max-w-5xl mx-auto px-4">
-        <div className="bg-slate-900 rounded-[2.5rem] p-12 text-center text-white relative overflow-hidden shadow-2xl">
-          <div className="relative z-10">
-            <h2 className="text-4xl font-black mb-4">Ready to upgrade your mind?</h2>
-            <p className="text-slate-400 text-lg mb-8 max-w-xl mx-auto">Join thousands of students building their academic and tech futures today.</p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/ai-hub" className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-400 transition-all">
-                Ask AI a Question
+      <section className="max-w-7xl mx-auto px-8 py-24">
+        <div className="bg-blue-600 rounded-[4rem] p-16 md:p-24 text-center text-white relative overflow-hidden shadow-2xl border border-white/10">
+          <div className="relative z-10 space-y-10">
+            <h2 className="text-6xl md:text-8xl font-black tracking-tighter leading-none">Ready for the <br/><span className="text-[#050505] italic">Grid?</span></h2>
+            <p className="text-blue-100 text-xl max-w-xl mx-auto font-medium opacity-80">Join 50,000+ Nigerian scholars building their legacy on MindGrid today.</p>
+            <div className="flex flex-row gap-4 justify-center">
+              <Link to="/login" className="flex-1 sm:flex-none bg-[#050505] text-white px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-all active:scale-95 shadow-2xl">
+                Join Now
               </Link>
-              <ShareButton 
-                variant="outline"
-                title="Join MindGrid Nigeria"
-                text="Join me on MindGrid for the best academic tools in Nigeria!"
-                className="bg-white text-slate-900 border-none px-8 py-3"
-              />
+              <button className="flex-1 sm:flex-none bg-white/10 border border-white/20 text-white px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
+                <Share2 size={16} /> Share
+              </button>
             </div>
           </div>
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-green-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[25rem] h-[25rem] bg-white/10 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[25rem] h-[25rem] bg-[#050505]/20 rounded-full blur-[100px]"></div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

@@ -16,6 +16,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  *   full_name text,
  *   university text,
  *   department text,
+ *   selected_tech_track text,
  *   updated_at timestamp with time zone
  * );
  * 
@@ -61,12 +62,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  *   created_at timestamp with time zone default now()
  * );
  * 
- * -- 6. Broadcast Logs (Campaign Tracking)
- * create table broadcast_logs (
+ * -- 6. User Progress Tracking
+ * create table user_progress (
  *   id uuid default uuid_generate_v4() primary key,
- *   title text,
- *   content text,
- *   reach integer,
- *   sent_at timestamp with time zone default now()
+ *   user_id uuid references auth.users on delete cascade,
+ *   topic_id text not null,
+ *   category_id text not null,
+ *   completed_at timestamp with time zone default now(),
+ *   unique(user_id, topic_id)
+ * );
+ * 
+ * -- 7. Lessons Cache (For instant loading)
+ * create table lessons_cache (
+ *   id uuid default uuid_generate_v4() primary key,
+ *   subject_topic_key text unique not null,
+ *   content jsonb not null,
+ *   created_at timestamp with time zone default now()
  * );
  */

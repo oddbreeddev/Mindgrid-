@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
     <div className="max-w-md mx-auto my-20 px-4">
       <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100 animate-in">
         <div className="text-center mb-8">
-          <div className="bg-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-green-200">
+          <div className="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-blue-200">
             <i className="fas fa-user-graduate"></i>
           </div>
           <h1 className="text-3xl font-black text-slate-800">{isSignUp ? 'Join MindGrid' : 'Welcome Back'}</h1>
@@ -64,7 +64,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         {message && (
-          <div className={`p-4 rounded-xl mb-6 text-sm font-bold text-center ${message.includes('Check') ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+          <div className={`p-4 rounded-xl mb-6 text-sm font-bold text-center ${message.includes('Check') ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
             {message}
           </div>
         )}
@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
             <input 
               type="text" 
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all font-medium"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-medium"
               placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
             <input 
               type="password" 
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all font-medium"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-medium"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -94,7 +94,7 @@ const LoginPage: React.FC = () => {
           </div>
           <button 
             disabled={loading}
-            className="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-slate-800 transition-all shadow-xl disabled:opacity-50 active:scale-95 mt-4 flex items-center justify-center gap-3"
+            className="w-full bg-slate-950 text-white font-black py-4 rounded-2xl hover:bg-slate-900 transition-all shadow-xl disabled:opacity-50 active:scale-95 mt-4 flex items-center justify-center gap-3"
           >
             {loading ? <i className="fas fa-spinner fa-spin"></i> : null}
             {isSignUp ? 'Create Account' : 'Sign In'}
@@ -104,7 +104,7 @@ const LoginPage: React.FC = () => {
         <div className="mt-8 text-center">
           <button 
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm font-bold text-slate-400 hover:text-green-600 transition-colors"
+            className="text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors"
           >
             {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
           </button>
