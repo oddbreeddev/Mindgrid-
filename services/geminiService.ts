@@ -1,8 +1,8 @@
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 
 export const isAIConfigured = () => {
-  return !!process.env.API_KEY && process.env.API_KEY.length > 10;
+  const key = typeof process !== 'undefined' ? process.env.API_KEY : '';
+  return !!key && key.length > 10;
 };
 
 const throttle = async () => {
@@ -31,7 +31,7 @@ export const generateLessonContent = async (subject: string, topic: string) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   const isPython = subject.toLowerCase().includes('python');
   const isWeb = subject.toLowerCase().includes('web');
   const isData = subject.toLowerCase().includes('data');
@@ -96,7 +96,7 @@ export const fetchCourseRequirements = async (course: string, university: string
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   const prompt = `Find the 2024/2025 admission requirements for "${course}" at "${university}" in Nigeria. Include JAMB combination, O-Level requirements, and cutoff mark.`;
 
   try {
@@ -126,7 +126,7 @@ export const generateFullArticle = async (topic?: string) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   const prompt = topic 
     ? `Write a 600-word academic guide for Nigerian students on: "${topic}". Return as JSON.`
     : `Choose a random trending academic/tech topic for Nigerian students. Return as JSON.`;
@@ -160,7 +160,7 @@ export const generateFullArticle = async (topic?: string) => {
 export const generateStudyHelp = async (query: string, useSearch: boolean = false) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   try {
     const config: any = {
       systemInstruction: `You are MindGrid AI, an academic mentor for Nigerians. Grounding: JAMB, WAEC, NUC.`,
@@ -184,7 +184,7 @@ export const generateStudyHelp = async (query: string, useSearch: boolean = fals
 export const fetchRealtimeNews = async (category: string) => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   const searchCategory = category === 'All' ? 'Nigerian Education News' : `Nigerian ${category} news`;
   const prompt = `Find 3 recent student updates for: "${searchCategory}". Format as a JSON array of objects with title, excerpt, date, url.`;
   try {
@@ -193,10 +193,8 @@ export const fetchRealtimeNews = async (category: string) => {
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         tools: [{ googleSearch: {} }],
-        // Rule: Search grounding responses may not be JSON. We request JSON in the prompt but don't force mimeType.
       },
     });
-    // Attempt parsing. If fails, returning mock/null is handled by caller.
     return parseAIResponse(response.text);
   } catch (error) { return null; }
 };
@@ -204,7 +202,7 @@ export const fetchRealtimeNews = async (category: string) => {
 export const generateAISchedule = async (goal: string) => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -229,7 +227,7 @@ export const generateAISchedule = async (goal: string) => {
 
 export const textToSpeech = async (text: string) => {
   if (!isAIConfigured()) return null;
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",

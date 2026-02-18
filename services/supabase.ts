@@ -10,12 +10,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    // Fix for: Acquiring an exclusive Navigator LockManager lock timed out
-    // Disabling the lock prevents race condition timeouts in environments where 
-    // Navigator.locks is slow or multiple client instances are attempted.
-    lock: {
-      enabled: false
-    }
   }
 });
 
@@ -32,7 +26,16 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  *   updated_at timestamp with time zone
  * );
  * 
- * -- 2. Timetables (AI Generated Schedules)
+ * -- 2. Social Posts (The Feed)
+ * create table social_posts (
+ *   id uuid default uuid_generate_v4() primary key,
+ *   user_id uuid references auth.users on delete cascade,
+ *   user_email text,
+ *   content text not null,
+ *   created_at timestamp with time zone default now()
+ * );
+ * 
+ * -- 3. Timetables (AI Generated Schedules)
  * create table timetables (
  *   id uuid default uuid_generate_v4() primary key,
  *   user_id uuid references auth.users on delete cascade,
@@ -41,7 +44,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  *   created_at timestamp with time zone default now()
  * );
  * 
- * -- 3. CGPA Records (Semester tracking)
+ * -- 4. CGPA Records (Semester tracking)
  * create table cgpa_records (
  *   id uuid default uuid_generate_v4() primary key,
  *   user_id uuid references auth.users on delete cascade,
@@ -52,7 +55,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  *   created_at timestamp with time zone default now()
  * );
  * 
- * -- 4. Curated Articles (AI Generated Content)
+ * -- 5. Curated Articles (AI Generated Content)
  * create table curated_articles (
  *   id uuid default uuid_generate_v4() primary key,
  *   title text not null,
@@ -62,33 +65,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  *   author_name text default 'MindGrid AI',
  *   image_id text,
  *   suggested_by text,
- *   created_at timestamp with time zone default now()
- * );
- * 
- * -- 5. Newsletter Subscribers
- * create table newsletter_subscribers (
- *   id uuid default uuid_generate_v4() primary key,
- *   email text unique not null,
- *   interests text[],
- *   platform text default 'email',
- *   created_at timestamp with time zone default now()
- * );
- * 
- * -- 6. User Progress Tracking
- * create table user_progress (
- *   id uuid default uuid_generate_v4() primary key,
- *   user_id uuid references auth.users on delete cascade,
- *   topic_id text not null,
- *   category_id text not null,
- *   completed_at timestamp with time zone default now(),
- *   unique(user_id, topic_id)
- * );
- * 
- * -- 7. Lessons Cache (For instant loading)
- * create table lessons_cache (
- *   id uuid default uuid_generate_v4() primary key,
- *   subject_topic_key text unique not null,
- *   content jsonb not null,
  *   created_at timestamp with time zone default now()
  * );
  */

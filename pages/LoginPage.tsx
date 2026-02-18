@@ -42,7 +42,8 @@ const LoginPage: React.FC = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         showToast('Login successful!', 'success');
-        navigate('/ai-hub');
+        // Redirect to root (/) which now resolves to StudentDashboard for auth users
+        navigate('/');
       }
     } catch (error: any) {
       setMessage(error.message);

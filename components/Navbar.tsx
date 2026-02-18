@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Cpu, Menu, X } from 'lucide-react';
+import { Cpu, Menu, X, MessageCircle } from 'lucide-react';
 import { NAV_LINKS } from '../constants';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,6 +13,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
+  const isAuthenticated = !!(user || isAdmin);
 
   return (
     <nav className="bg-[#050505] border-b border-white/5 sticky top-0 z-[60] h-20 flex items-center" role="navigation" aria-label="Main Navigation">
@@ -29,6 +30,20 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
         </div>
         
         <div className="hidden md:flex items-center space-x-8">
+          {isAuthenticated && (
+            <Link
+              to="/feed"
+              className={`${
+                location.pathname === '/feed'
+                  ? 'text-blue-500'
+                  : 'text-gray-400 hover:text-blue-400'
+              } text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-colors`}
+            >
+              <MessageCircle size={16} />
+              Feed
+            </Link>
+          )}
+
           {NAV_LINKS.map((link) => (
             link.path === '/newsletter' ? (
               <button
@@ -65,7 +80,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
             </Link>
           )}
           
-          {(user || isAdmin) ? (
+          {isAuthenticated ? (
             <div className="flex items-center gap-6">
               <button 
                 onClick={signOut}
@@ -101,6 +116,16 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
       {isOpen && (
         <div className="md:hidden fixed top-20 left-0 right-0 bottom-0 bg-[#050505] z-[70] p-8 border-t border-white/5 animate-in slide-in-from-top-4">
           <div className="flex flex-col gap-6">
+            {isAuthenticated && (
+              <Link
+                to="/feed"
+                onClick={() => setIsOpen(false)}
+                className="text-xl font-bold text-blue-500 flex items-center gap-3"
+              >
+                <MessageCircle size={24} />
+                Scholars Feed
+              </Link>
+            )}
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.path}
@@ -112,7 +137,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
               </Link>
             ))}
             <div className="pt-8 border-t border-white/5 flex flex-col gap-4">
-              {(user || isAdmin) ? (
+              {isAuthenticated ? (
                  <button onClick={signOut} className="text-left text-xl font-bold text-red-500">Sign Out</button>
               ) : (
                 <Link

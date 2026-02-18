@@ -5,9 +5,12 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import NewsletterModal from './components/NewsletterModal';
+import { useAuth } from './context/AuthContext';
 
 // Lazy Loaded Pages
 const HomePage = lazy(() => import('./pages/HomePage'));
+const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
+const SocialFeed = lazy(() => import('./pages/SocialFeed'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const LibraryPage = lazy(() => import('./pages/LibraryPage'));
 const ToolsPage = lazy(() => import('./pages/ToolsPage'));
@@ -39,6 +42,7 @@ const TitleManager: React.FC = () => {
   useEffect(() => {
     const titles: { [key: string]: string } = {
       '/': 'MindGrid | Nigerian Student Hub & AI Tutor',
+      '/feed': 'Scholars Feed | The Pulse of Nigerian Students',
       '/study': 'Study Hub | JAMB, WAEC & Tech Mastery | MindGrid',
       '/blog': 'Latest News & Social Buzz | MindGrid Nigeria',
       '/library': 'AI Curated Academic Library | MindGrid Nigeria',
@@ -66,19 +70,21 @@ const TitleManager: React.FC = () => {
 
 const App: React.FC = () => {
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
+  const isAuthenticated = !!(user || isAdmin);
 
   useEffect(() => {
     const hasSubscribed = localStorage.getItem('mindgrid_subscribed');
     const hasBeenPrompted = sessionStorage.getItem('mindgrid_prompted');
     
-    if (!hasSubscribed && !hasBeenPrompted) {
+    if (!isAuthenticated && !hasSubscribed && !hasBeenPrompted) {
       const timer = setTimeout(() => {
         setIsNewsletterOpen(true);
         sessionStorage.setItem('mindgrid_prompted', 'true');
       }, 10000);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <Router>
@@ -88,7 +94,8 @@ const App: React.FC = () => {
         <main className="flex-grow">
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={isAuthenticated ? <StudentDashboard /> : <HomePage />} />
+              <Route path="/feed" element={<SocialFeed />} />
               <Route path="/study" element={<StudyPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/library" element={<LibraryPage />} />
@@ -108,7 +115,8 @@ const App: React.FC = () => {
             </Routes>
           </Suspense>
         </main>
-        <Footer onOpenNewsletter={() => setIsNewsletterOpen(true)} />
+        {/* Footer hidden for authenticated users to provide an immersive workspace experience */}
+        {!isAuthenticated && <Footer onOpenNewsletter={() => setIsNewsletterOpen(true)} />}
         <CookieConsent />
         <NewsletterModal isOpen={isNewsletterOpen} onClose={() => setIsNewsletterOpen(false)} />
       </div>
