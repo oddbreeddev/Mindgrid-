@@ -5,7 +5,19 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = 'https://rsvvkwsqvoukjjflnqcu.supabase.co';
 const supabaseAnonKey = 'sb_publishable_8DCplz8MO7FPRPG-DYQX5g_RvxDgtzo';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    // Fix for: Acquiring an exclusive Navigator LockManager lock timed out
+    // Disabling the lock prevents race condition timeouts in environments where 
+    // Navigator.locks is slow or multiple client instances are attempted.
+    lock: {
+      enabled: false
+    }
+  }
+});
 
 /**
  * DATABASE SCHEMA REMINDER (Run in Supabase SQL Editor):
