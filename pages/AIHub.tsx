@@ -26,7 +26,7 @@ const AIHub: React.FC = () => {
       setConfigError(true);
     }
 
-    const saved = sessionStorage.getItem('mindgrid_chat_v3');
+    const saved = sessionStorage.getItem('mindgrid_chat_v4');
     if (saved) {
       setMessages(JSON.parse(saved));
     } else {
@@ -38,7 +38,7 @@ const AIHub: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem('mindgrid_chat_v3', JSON.stringify(messages));
+    sessionStorage.setItem('mindgrid_chat_v4', JSON.stringify(messages));
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -68,7 +68,7 @@ const AIHub: React.FC = () => {
     } catch (error: any) {
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        text: "I'm having trouble connecting to my academic database. Please ensure your internet connection is stable and try again in a moment." 
+        text: "I'm having trouble connecting to my academic database. Please ensure your internet connection is stable and try again." 
       }]);
     } finally {
       setIsLoading(false);
@@ -86,17 +86,19 @@ const AIHub: React.FC = () => {
       const base64 = await textToSpeech(text);
       if (base64) {
         const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-        const byteCharacters = atob(base64);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        const binaryString = atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const dataInt16 = new Int16Array(byteArray.buffer);
-        const buffer = audioCtx.createBuffer(1, dataInt16.length, 24000);
+        
+        // Ensure even byte length for Int16 conversion
+        const pcmData = new Int16Array(bytes.buffer.slice(0, len - (len % 2)));
+        const buffer = audioCtx.createBuffer(1, pcmData.length, 24000);
         const channelData = buffer.getChannelData(0);
-        for (let i = 0; i < dataInt16.length; i++) {
-          channelData[i] = dataInt16[i] / 32768.0;
+        for (let i = 0; i < pcmData.length; i++) {
+          channelData[i] = pcmData[i] / 32768.0;
         }
         
         const source = audioCtx.createBufferSource();
@@ -118,7 +120,7 @@ const AIHub: React.FC = () => {
           <i className="fas fa-exclamation-triangle text-2xl"></i>
           <div>
             <p className="font-black text-sm uppercase tracking-widest">Configuration Warning</p>
-            <p className="text-sm">The AI service is currently unavailable. Please check if your <strong>API_KEY</strong> is properly set in the environment variables.</p>
+            <p className="text-sm">The AI service is unavailable. Check your <strong>API_KEY</strong> configuration.</p>
           </div>
         </div>
       )}
@@ -142,11 +144,11 @@ const AIHub: React.FC = () => {
               onClick={() => setUseSearch(!useSearch)}
               className={`text-[10px] font-black px-4 py-2 rounded-xl uppercase transition-all flex items-center gap-2 ${useSearch ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/10 text-slate-400'}`}
             >
-              <i className="fas fa-globe"></i> {useSearch ? 'Grounding On' : 'Search Off'}
+              <i className="fas fa-globe"></i> {useSearch ? 'Search On' : 'Search Off'}
             </button>
             <button 
               onClick={() => {
-                sessionStorage.removeItem('mindgrid_chat_v3');
+                sessionStorage.removeItem('mindgrid_chat_v4');
                 setMessages([{ role: 'assistant', text: "Chat history cleared. How can I help you today?" }]);
               }}
               className="text-[10px] font-black bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl uppercase transition-colors"
@@ -174,7 +176,7 @@ const AIHub: React.FC = () => {
                     className="absolute -right-4 -bottom-4 bg-white shadow-xl w-10 h-10 rounded-2xl flex items-center justify-center text-blue-600 hover:scale-110 transition-transform border border-slate-100 z-10"
                     title="Read aloud"
                   >
-                    <i className={`fas ${isSpeaking === idx ? 'fa-pause text-xs' : 'fa-volume-up text-sm'}`}></i>
+                    <i className={`fas ${isSpeaking === index ? 'fa-pause text-xs' : 'fa-volume-up text-sm'}`}></i>
                   </button>
                 )}
               </div>
