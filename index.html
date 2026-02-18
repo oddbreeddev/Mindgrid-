@@ -3,97 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>MindGrid | Nigerian Student Resource Hub & AI Tutor</title>
+  <title>MindGrid | Your Study Helper</title>
   
-  <!-- Primary Meta Tags -->
-  <meta name="title" content="MindGrid | Nigerian Student Resource Hub & AI Tutor">
-  <meta name="description" content="The ultimate hybrid platform for Nigerian students. Master JAMB/WAEC syllabus while building your tech career with AI-powered tutoring and roadmap tools.">
-  <meta name="keywords" content="JAMB, WAEC, Nigerian Students, CGPA Calculator, Tech Roadmaps, AI Tutor, UNILAG, UI, ABU, Post-UTME prep">
-  <meta name="author" content="MindGrid Nigeria">
-  <link rel="canonical" href="https://mindgrid.com.ng/" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://mindgrid.com.ng/">
-  <meta property="og:title" content="MindGrid | Nigerian Student Resource Hub & AI Tutor">
-  <meta property="og:description" content="The ultimate hybrid platform for Nigerian students. Master JAMB/WAEC syllabus while building your tech career.">
+  <meta name="description" content="A simple and helpful place for Nigerian students to study for JAMB, WAEC, and learn tech skills.">
+  <meta property="og:title" content="MindGrid Nigeria">
+  <meta property="og:description" content="The easy way to study and grow your skills.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=1200">
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://mindgrid.com.ng/">
-  <meta property="twitter:title" content="MindGrid | Nigerian Student Resource Hub & AI Tutor">
-  <meta property="twitter:description" content="Master JAMB/WAEC while building your tech career with AI-powered tutoring.">
-  <meta property="twitter:image" content="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=1200">
-
-  <!-- Shim process for browser environment -->
   <script>
-    if (typeof window !== 'undefined' && typeof window.process === 'undefined') {
-      window.process = { env: { NODE_ENV: 'production', API_KEY: '' } };
-    }
+    // This makes sure the app doesn't break on start
+    window.process = window.process || { env: { NODE_ENV: 'production', API_KEY: '' } };
   </script>
 
-  <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "MindGrid Nigeria",
-    "url": "https://mindgrid.com.ng",
-    "logo": "https://mindgrid.com.ng/icon.svg",
-    "sameAs": [
-      "https://twitter.com/mindgridng",
-      "https://instagram.com/mindgridng"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+234-800-MIND-GRID",
-      "contactType": "customer service"
-    }
-  }
-  </script>
-
-  <!-- PWA & Mobile -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2563eb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      scroll-behavior: smooth;
       background-color: #050505;
       color: #f8fafc;
       margin: 0;
     }
-    .selection-blue::selection {
-      background-color: #2563eb;
-      color: white;
+    .soft-glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .animate-in {
-      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .animate-up {
+      animation: slideUp 0.5s ease-out forwards;
     }
-    /* Smooth Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #050505; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #334155; }
-    
-    /* Custom utility for glassmorphism */
-    .glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
+
 <script type="importmap">
 {
   "imports": {
@@ -112,7 +59,7 @@
 }
 </script>
 </head>
-<body class="selection-blue">
+<body class="selection:bg-blue-600 selection:text-white">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

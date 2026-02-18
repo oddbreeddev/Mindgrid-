@@ -1,7 +1,7 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { subscribeToNewsletter } from '../services/dataService';
 import { useToast } from '../context/ToastContext';
+import { X, Mail, MessageCircle, Sparkles } from 'lucide-react';
 
 interface NewsletterModalProps {
   isOpen: boolean;
@@ -14,14 +14,6 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
   const [platform, setPlatform] = useState<'email' | 'whatsapp'>('email');
   const [interests, setInterests] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const categories = [
-    { id: 'JAMB', label: 'JAMB' },
-    { id: 'Scholarships', label: 'Scholarships' },
-    { id: 'University', label: 'University' },
-    { id: 'Tech', label: 'Tech' },
-    { id: 'Career', label: 'Careers' }
-  ];
 
   const toggleInterest = (id: string) => {
     setInterests(prev => 
@@ -37,66 +29,75 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
     try {
       const result = await subscribeToNewsletter(email, interests, platform);
       if (result.success) {
-        showToast('You are in the Vault! Welcome.', 'success');
+        showToast('Success! You are now subscribed.', 'success');
         localStorage.setItem('mindgrid_subscribed', 'true');
         onClose();
       } else {
-        showToast(result.error || 'Check your connection.', 'error');
+        showToast(result.error || 'Please check your connection.', 'error');
       }
     } catch (err) {
-      showToast('Connection error.', 'error');
+      showToast('Something went wrong. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-in">
+    <div 
+      className="fixed inset-0 z-[200] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-md p-0 md:p-4 transition-all duration-300 animate-in fade-in"
+      onClick={handleBackdropClick}
+    >
       <div 
-        className="bg-white w-full md:max-w-xl md:rounded-[3rem] rounded-t-[2.5rem] overflow-hidden shadow-2xl relative animate-in slide-in-from-bottom md:slide-in-from-bottom-0"
-        style={{ animationDuration: '0.4s' }}
+        className="bg-white w-full md:max-w-xl md:rounded-[2.5rem] rounded-t-[2.5rem] overflow-hidden shadow-2xl relative animate-in slide-in-from-bottom duration-500"
+        onClick={(e) => e.stopPropagation()}
       >
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-all z-20"
+          className="absolute top-6 right-6 w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-all z-20"
         >
-          <i className="fas fa-times"></i>
+          <X size={20} />
         </button>
 
         <div className="p-8 md:p-12">
           <div className="text-center mb-8">
-            <div className="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-xl shadow-blue-200">
-              <i className="fas fa-paper-plane"></i>
+            <div className="bg-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-blue-500/20">
+              <Sparkles size={28} />
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Join the <span className="text-blue-600">Inner Circle</span></h2>
-            <p className="text-slate-500 text-sm mt-2 font-medium">Get JAMB alerts, scholarships, and tech jobs first.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Stay <span className="text-blue-500">Updated</span></h2>
+            <p className="text-gray-500 text-sm mt-2 font-medium">Get JAMB alerts, scholarships, and school news first.</p>
           </div>
 
           <form onSubmit={handleSubscribe} className="space-y-6">
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl">
+            <div className="flex bg-gray-100 p-1.5 rounded-2xl">
               <button 
                 type="button"
                 onClick={() => setPlatform('email')}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${platform === 'email' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${platform === 'email' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'}`}
               >
-                Email
+                <Mail size={14} /> Email
               </button>
               <button 
                 type="button"
                 onClick={() => setPlatform('whatsapp')}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${platform === 'whatsapp' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${platform === 'whatsapp' ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400'}`}
               >
-                WhatsApp
+                <MessageCircle size={14} /> WhatsApp
               </button>
             </div>
 
             <input 
               type={platform === 'email' ? 'email' : 'tel'}
               required
-              placeholder={platform === 'email' ? 'Enter your email' : '+234 Phone Number'}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-medium text-slate-700"
+              placeholder={platform === 'email' ? 'Your email address' : 'Your WhatsApp number'}
+              className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-gray-700 transition-all"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -104,12 +105,12 @@ const NewsletterModal: React.FC<NewsletterModalProps> = ({ isOpen, onClose }) =>
             <button 
               type="submit"
               disabled={isSubmitting || !email}
-              className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]"
+              className="w-full bg-blue-500 text-white font-bold py-5 rounded-2xl hover:bg-blue-600 transition-all shadow-lg active:scale-95 disabled:opacity-50 text-sm"
             >
-              {isSubmitting ? <i className="fas fa-spinner fa-spin mr-2"></i> : 'Activate Alerts'}
+              {isSubmitting ? 'Joining...' : 'Get Updates'}
             </button>
 
-            <p className="text-[9px] text-center text-slate-400 font-medium">Join 24,000+ students. Unsubscribe at any time.</p>
+            <p className="text-[10px] text-center text-gray-400 font-medium">No spam, just helpful school info. Unsubscribe anytime.</p>
           </form>
         </div>
       </div>

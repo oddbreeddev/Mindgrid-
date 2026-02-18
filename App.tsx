@@ -1,5 +1,4 @@
-
-import React, { useEffect, Suspense, lazy, useState } from 'react';
+import React, { useEffect, Suspense, lazy, useState, useCallback } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -28,43 +27,32 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
-// Loading Fallback updated to Pitch Black
 const PageLoader = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505]">
-    <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <p className="text-blue-400 font-black text-xs uppercase tracking-[0.3em]">Syncing MindGrid...</p>
+    <div className="w-12 h-12 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+    <p className="text-blue-400 font-bold text-xs uppercase tracking-widest">Opening MindGrid...</p>
   </div>
 );
 
 const TitleManager: React.FC = () => {
   const location = useLocation();
-
   useEffect(() => {
     const titles: { [key: string]: string } = {
-      '/': 'MindGrid | Nigerian Student Hub & AI Tutor',
-      '/feed': 'Scholars Feed | The Pulse of Nigerian Students',
-      '/study': 'Study Hub | JAMB, WAEC & Tech Mastery | MindGrid',
-      '/blog': 'Latest News & Social Buzz | MindGrid Nigeria',
-      '/library': 'AI Curated Academic Library | MindGrid Nigeria',
-      '/tools': 'Student Power Tools | MindGrid Nigeria',
-      '/tools/cgpa': 'Nigerian CGPA Calculator (5.0 & 4.0) | MindGrid',
-      '/tools/timetable': 'AI Study Timetable Planner | MindGrid',
-      '/tools/course-finder': 'Admissions Navigator | Subject Combination & Cutoffs',
-      '/ai-hub': 'AI Study Assistant & Tutor | MindGrid',
-      '/careers': 'Student Jobs & Tech Internships Nigeria | MindGrid',
-      '/newsletter': 'MindGrid Intelligence | Academic Newsletter',
-      '/admin': 'Admin Control | MindGrid Nigeria',
-      '/about': 'About MindGrid | Empowering Nigerian Students',
-      '/contact': 'Contact Us | MindGrid Support',
-      '/privacy': 'Privacy Policy | MindGrid Nigeria',
-      '/terms': 'Terms of Service | MindGrid Nigeria',
-      '/login': 'Login | Join MindGrid Nigeria',
+      '/': 'MindGrid | Your Study Helper',
+      '/feed': 'Student Chat | MindGrid',
+      '/study': 'Study Roadmaps | MindGrid',
+      '/blog': 'Latest News | MindGrid',
+      '/library': 'Study Vault | MindGrid',
+      '/tools': 'Student Tools | MindGrid',
+      '/tools/cgpa': 'Grade Tracker | MindGrid',
+      '/tools/timetable': 'Study Planner | MindGrid',
+      '/tools/course-finder': 'Course Finder | MindGrid',
+      '/ai-hub': 'AI Study Friend | MindGrid',
+      '/careers': 'Student Jobs | MindGrid',
     };
-
-    document.title = titles[location.pathname] || 'MindGrid | Nigerian Student Resource Hub';
+    document.title = titles[location.pathname] || 'MindGrid | Nigerian Student Hub';
     window.scrollTo(0, 0);
   }, [location]);
-
   return null;
 };
 
@@ -73,18 +61,49 @@ const App: React.FC = () => {
   const { user, isAdmin } = useAuth();
   const isAuthenticated = !!(user || isAdmin);
 
+  // Function to show the modal again after a delay
+  const scheduleNextPopup = useCallback(() => {
+    setTimeout(() => {
+      // Only show if user is still not logged in and didn't subscribe yet
+      const hasSubscribed = localStorage.getItem('mindgrid_subscribed');
+      if (!isAuthenticated && !hasSubscribed) {
+        setIsNewsletterOpen(true);
+      }
+    }, 60000); // 1 minute delay
+  }, [isAuthenticated]);
+
   useEffect(() => {
     const hasSubscribed = localStorage.getItem('mindgrid_subscribed');
     const hasBeenPrompted = sessionStorage.getItem('mindgrid_prompted');
     
+    // Initial popup
     if (!isAuthenticated && !hasSubscribed && !hasBeenPrompted) {
       const timer = setTimeout(() => {
         setIsNewsletterOpen(true);
         sessionStorage.setItem('mindgrid_prompted', 'true');
-      }, 10000);
+      }, 8000);
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated]);
+
+  // Exit intent logic
+  useEffect(() => {
+    const handleExitIntent = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !isAuthenticated && !localStorage.getItem('mindgrid_subscribed') && !isNewsletterOpen) {
+        setIsNewsletterOpen(true);
+      }
+    };
+
+    document.addEventListener('mouseleave', handleExitIntent);
+    return () => document.removeEventListener('mouseleave', handleExitIntent);
+  }, [isAuthenticated, isNewsletterOpen]);
+
+  const closeNewsletter = () => {
+    setIsNewsletterOpen(false);
+    if (!localStorage.getItem('mindgrid_subscribed')) {
+      scheduleNextPopup();
+    }
+  };
 
   return (
     <Router>
@@ -115,10 +134,9 @@ const App: React.FC = () => {
             </Routes>
           </Suspense>
         </main>
-        {/* Footer hidden for authenticated users to provide an immersive workspace experience */}
         {!isAuthenticated && <Footer onOpenNewsletter={() => setIsNewsletterOpen(true)} />}
         <CookieConsent />
-        <NewsletterModal isOpen={isNewsletterOpen} onClose={() => setIsNewsletterOpen(false)} />
+        <NewsletterModal isOpen={isNewsletterOpen} onClose={closeNewsletter} />
       </div>
     </Router>
   );
