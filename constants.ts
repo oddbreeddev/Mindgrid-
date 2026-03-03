@@ -3,7 +3,7 @@ import { NavItem, GradeScale, SyllabusSubject } from './types';
 
 export const NAV_LINKS: NavItem[] = [
   { label: 'Home', path: '/' },
-  { label: 'Study Section', path: '/study', icon: 'fa-book-open' },
+  { label: 'CramZone', path: '/study', icon: 'fa-book-open' },
   { label: 'Blog', path: '/blog' },
   { label: 'Library', path: '/library' },
   { label: 'Tools', path: '/tools' },

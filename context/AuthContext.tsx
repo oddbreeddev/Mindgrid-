@@ -46,12 +46,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    setProfile(data);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, create it
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert({ id: userId, updated_at: new Date().toISOString() })
+          .select()
+          .single();
+        
+        if (!createError) {
+          setProfile(newProfile);
+        }
+      } else {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error('Error fetching/creating profile:', err);
+    }
   };
 
   const setAdminStatus = (status: boolean) => {

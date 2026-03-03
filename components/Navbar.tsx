@@ -65,7 +65,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
                 } text-sm font-medium transition-colors`}
                 aria-current={location.pathname === link.path ? 'page' : undefined}
               >
-                {link.label === 'CramZone' ? 'Study Hub' : link.label}
+                {link.label}
               </Link>
             )
           ))}
@@ -133,7 +133,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
                 onClick={() => setIsOpen(false)}
                 className="text-xl font-bold text-gray-400 hover:text-blue-500"
               >
-                {link.label === 'CramZone' ? 'Study Hub' : link.label}
+                {link.label}
               </Link>
             ))}
             <div className="pt-8 border-t border-white/5 flex flex-col gap-4">

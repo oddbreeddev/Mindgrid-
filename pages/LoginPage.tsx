@@ -42,11 +42,30 @@ const LoginPage: React.FC = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         showToast('Login successful!', 'success');
-        // Redirect to root (/) which now resolves to StudentDashboard for auth users
         navigate('/');
       }
     } catch (error: any) {
       setMessage(error.message);
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      showToast('Please enter your email first.', 'error');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (error) throw error;
+      setMessage('Password reset link sent to your email!');
+      showToast('Reset link sent!', 'info');
+    } catch (error: any) {
       showToast(error.message, 'error');
     } finally {
       setLoading(false);
@@ -92,6 +111,17 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {!isSignUp && (
+              <div className="text-right">
+                <button 
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+            )}
           </div>
           <button 
             disabled={loading}

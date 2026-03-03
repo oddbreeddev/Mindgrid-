@@ -158,7 +158,7 @@ const StudyPage: React.FC = () => {
     return (
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 animate-in">
         <div className="text-center mb-12 space-y-3">
-          <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">Study <span className="text-blue-600">Hub</span></h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">Cram<span className="text-blue-600">Zone</span></h1>
           <p className="text-slate-500 text-sm md:text-lg font-medium max-w-lg mx-auto">Choose what you want to study today.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

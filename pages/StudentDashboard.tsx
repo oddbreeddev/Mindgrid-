@@ -116,7 +116,7 @@ const StudentDashboard: React.FC = () => {
               <BookOpen size={24} />
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-0.5">Study Roadmap</h4>
+              <h4 className="font-bold text-lg mb-0.5">CramZone</h4>
               <p className="text-gray-500 text-xs">Keep learning today.</p>
             </div>
           </Link>
