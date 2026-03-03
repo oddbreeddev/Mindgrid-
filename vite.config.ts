@@ -3,7 +3,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()],
+  base: './',
+  plugins: [
+    react(),
+  ],
   define: {
     // Vite uses 'process.env.API_KEY' mapping during build.
     // This allows the use of standard env vars in both Netlify and Vercel.
