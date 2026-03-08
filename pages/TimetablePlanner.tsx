@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { generateAISchedule } from '../services/geminiService';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../services/supabase';
+import { db } from '../src/firebase';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 interface StudySession {
   subject: string;
@@ -27,8 +28,18 @@ const TimetablePlanner: React.FC = () => {
   useEffect(() => {
     const loadTimetable = async () => {
       if (user) {
-        const { data } = await supabase.from('timetables').select('*').eq('user_id', user.id).limit(1).single();
-        if (data) { setTimetable(data.data); setGoal(data.goal); return; }
+        try {
+          const docRef = doc(db, 'timetables', user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setTimetable(data.data);
+            setGoal(data.goal);
+            return;
+          }
+        } catch (e) {
+          console.error("Error loading timetable:", e);
+        }
       }
       const saved = localStorage.getItem('mindgrid_timetable');
       if (saved) setTimetable(JSON.parse(saved));
@@ -38,32 +49,49 @@ const TimetablePlanner: React.FC = () => {
   }, [user]);
 
   const syncToCloud = async (newTimetable: DayPlan[], currentGoal: string) => {
-    if (!user) { localStorage.setItem('mindgrid_timetable', JSON.stringify(newTimetable)); return; }
-    try { await supabase.from('timetables').upsert({ user_id: user.id, goal: currentGoal, data: newTimetable, updated_at: new Date().toISOString() }, { onConflict: 'user_id' }); }
-    catch (e) { console.error(e); }
+    if (!user) {
+      localStorage.setItem('mindgrid_timetable', JSON.stringify(newTimetable));
+      return;
+    }
+    try {
+      await setDoc(doc(db, 'timetables', user.uid), {
+        user_id: user.uid,
+        goal: currentGoal,
+        data: newTimetable,
+        updated_at: serverTimestamp()
+      }, { merge: true });
+    } catch (e) {
+      console.error("Error syncing timetable:", e);
+    }
   };
 
   const handleAISchedule = async () => {
     if (!goal.trim()) return;
     setIsGenerating(true);
     const result = await generateAISchedule(goal);
-    if (result && Array.isArray(result)) { setTimetable(result); syncToCloud(result, goal); }
+    if (result && Array.isArray(result)) {
+      setTimetable(result);
+      syncToCloud(result, goal);
+    }
     setIsGenerating(false);
   };
 
   const addSession = (day: string) => {
     const updated = timetable.map(d => d.day === day ? { ...d, sessions: [...d.sessions, { subject: 'Mathematics', topic: '' }] } : d);
-    setTimetable(updated); syncToCloud(updated, goal);
+    setTimetable(updated);
+    syncToCloud(updated, goal);
   };
 
   const updateSession = (day: string, idx: number, field: keyof StudySession, val: string) => {
     const updated = timetable.map(d => d.day === day ? { ...d, sessions: d.sessions.map((s, i) => i === idx ? { ...s, [field]: val } : s) } : d);
-    setTimetable(updated); syncToCloud(updated, goal);
+    setTimetable(updated);
+    syncToCloud(updated, goal);
   };
 
   const removeSession = (day: string, idx: number) => {
     const updated = timetable.map(d => d.day === day ? { ...d, sessions: d.sessions.filter((_, i) => i !== idx) } : d);
-    setTimetable(updated); syncToCloud(updated, goal);
+    setTimetable(updated);
+    syncToCloud(updated, goal);
   };
 
   const currentDayPlan = timetable.find(d => d.day === activeTab);

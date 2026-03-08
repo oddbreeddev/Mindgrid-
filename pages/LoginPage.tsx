@@ -1,6 +1,11 @@
 
 import React, { useState } from 'react';
-import { supabase } from '../services/supabase';
+import { auth } from '../src/firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  sendPasswordResetEmail 
+} from 'firebase/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -34,25 +39,22 @@ const LoginPage: React.FC = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ 
-          email, 
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/#/login`
-          }
-        });
-        if (error) throw error;
-        setMessage('Check your email for confirmation link!');
-        showToast('Account created! Check email.', 'info');
+        await createUserWithEmailAndPassword(auth, email, password);
+        showToast('Account created successfully!', 'success');
+        navigate('/');
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        await signInWithEmailAndPassword(auth, email, password);
         showToast('Login successful!', 'success');
         navigate('/');
       }
     } catch (error: any) {
-      setMessage(error.message);
-      showToast(error.message, 'error');
+      let errorMsg = error.message;
+      if (error.code === 'auth/email-already-in-use') errorMsg = 'Email already in use.';
+      if (error.code === 'auth/invalid-credential') errorMsg = 'Invalid email or password.';
+      if (error.code === 'auth/weak-password') errorMsg = 'Password is too weak.';
+      
+      setMessage(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -65,10 +67,7 @@ const LoginPage: React.FC = () => {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/#/reset-password`,
-      });
-      if (error) throw error;
+      await sendPasswordResetEmail(auth, email);
       setMessage('Password reset link sent to your email!');
       showToast('Reset link sent!', 'info');
     } catch (error: any) {
@@ -90,7 +89,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         {message && (
-          <div className={`p-4 rounded-xl mb-6 text-sm font-bold text-center ${message.includes('Check') ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+          <div className={`p-4 rounded-xl mb-6 text-sm font-bold text-center ${message.includes('Check') || message.includes('successfully') ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
             {message}
           </div>
         )}
@@ -99,7 +98,7 @@ const LoginPage: React.FC = () => {
           <div className="space-y-1">
             <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
             <input 
-              type="text" 
+              type="email" 
               required
               className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-medium"
               placeholder="Email address"

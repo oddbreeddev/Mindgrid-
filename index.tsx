@@ -6,10 +6,10 @@ import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: any }> {
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
   state = { hasError: false, error: null };
-  static getDerivedStateFromError(error: any) { return { hasError: true, error }; }
-  componentDidCatch(error: any, info: any) { console.error("App Crash:", error, info); }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  componentDidCatch(error: Error, info: React.ErrorInfo) { console.error("App Crash:", error, info); }
   render() {
     if (this.state.hasError) {
       return (
@@ -19,7 +19,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
           </div>
           <h1 className="text-2xl font-black mb-2">Something went wrong.</h1>
           <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
-            {this.state.error?.message || "An unexpected error occurred while loading the application."}
+            {(this.state.error as any)?.message || "An unexpected error occurred while loading the application."}
           </p>
           <button 
             onClick={() => window.location.reload()} 

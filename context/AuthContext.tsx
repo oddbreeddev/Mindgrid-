@@ -1,7 +1,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../services/supabase';
-import { User } from '@supabase/supabase-js';
+import { auth, db, handleFirestoreError } from '../src/firebase';
+import { onAuthStateChanged, signOut as firebaseSignOut, User } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -27,54 +28,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAdmin(true);
     }
 
-    // Check active Supabase sessions
-    supabase.auth.getSession()
-      .then(({ data: { session } }: any) => {
-        setUser(session?.user ?? null);
-        if (session?.user) fetchProfile(session.user.id);
-      })
-      .catch((err: any) => {
-        console.error("Supabase Session Error:", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else setProfile(null);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        fetchProfile(currentUser.uid);
+        // Check if user is the default admin
+        if (currentUser.email === 'aminudanielkaltungo@gmail.com') {
+          setIsAdmin(true);
+          localStorage.setItem('mg_admin_vault', 'true');
+        }
+      } else {
+        setProfile(null);
+        setIsAdmin(false);
+        localStorage.removeItem('mg_admin_vault');
+      }
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const docRef = doc(db, 'profiles', userId);
+      const docSnap = await getDoc(docRef);
       
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, create it
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert({ id: userId, updated_at: new Date().toISOString() })
-          .select()
-          .single();
-        
-        if (!createError) {
-          setProfile(newProfile);
-        }
+      if (docSnap.exists()) {
+        setProfile(docSnap.data());
       } else {
-        setProfile(data);
+        // Profile doesn't exist, create it
+        const newProfile = { 
+          updated_at: new Date().toISOString(),
+          role: userId === auth.currentUser?.uid && auth.currentUser?.email === 'aminudanielkaltungo@gmail.com' ? 'admin' : 'user'
+        };
+        await setDoc(docRef, newProfile);
+        setProfile(newProfile);
       }
     } catch (err) {
       console.error('Error fetching/creating profile:', err);
+      // handleFirestoreError(err, 'get', `profiles/${userId}`);
     }
   };
 
@@ -87,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     localStorage.removeItem('mg_admin_vault');
     setIsAdmin(false);
-    await supabase.auth.signOut();
+    await firebaseSignOut(auth);
   };
 
   return (

@@ -27,6 +27,8 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const StudyGroupsPage = lazy(() => import('./pages/StudyGroupsPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505]">
@@ -143,6 +145,8 @@ const App: React.FC = () => {
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/study-groups" element={<StudyGroupsPage />} />
             </Routes>
           </Suspense>
         </main>

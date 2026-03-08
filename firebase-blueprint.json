@@ -1,0 +1,166 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Student information and preferences",
+      "type": "object",
+      "properties": {
+        "full_name": { "type": "string", "description": "Student's full name" },
+        "university": { "type": "string", "description": "Nigerian university name" },
+        "department": { "type": "string", "description": "Academic department" },
+        "bio": { "type": "string", "description": "Short student biography" },
+        "photo_url": { "type": "string", "description": "Profile picture URL" },
+        "selected_tech_track": { "type": "string", "description": "Chosen tech career path" },
+        "updated_at": { "type": "string", "format": "date-time", "description": "Last profile update" }
+      },
+      "required": ["updated_at"]
+    },
+    "SocialPost": {
+      "title": "Social Post",
+      "description": "A post in the scholars feed",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string", "description": "UID of the author" },
+        "user_email": { "type": "string", "description": "Email of the author" },
+        "content": { "type": "string", "description": "Post text content" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of posting" }
+      },
+      "required": ["user_id", "user_email", "content", "created_at"]
+    },
+    "Timetable": {
+      "title": "Timetable",
+      "description": "AI-generated study schedule",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string", "description": "UID of the owner" },
+        "goal": { "type": "string", "description": "Study goal" },
+        "data": { "type": "object", "description": "The schedule JSON data" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of creation" }
+      },
+      "required": ["user_id", "goal", "data", "created_at"]
+    },
+    "CGPARecord": {
+      "title": "CGPA Record",
+      "description": "Semester GPA tracking",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string", "description": "UID of the owner" },
+        "semester_label": { "type": "string", "description": "Label for the semester" },
+        "gpa": { "type": "number", "description": "GPA value" },
+        "units": { "type": "integer", "description": "Total credit units" },
+        "courses": { "type": "array", "description": "List of courses and grades" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of recording" }
+      },
+      "required": ["user_id", "semester_label", "gpa", "units", "courses", "created_at"]
+    },
+    "CuratedArticle": {
+      "title": "Curated Article",
+      "description": "AI-generated academic content",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Article title" },
+        "excerpt": { "type": "string", "description": "Short summary" },
+        "content": { "type": "string", "description": "Full markdown content" },
+        "category": { "type": "string", "description": "Article category" },
+        "author_name": { "type": "string", "description": "Author name" },
+        "image_id": { "type": "string", "description": "Unsplash image ID" },
+        "suggested_by": { "type": "string", "description": "User who suggested or wrote the topic" },
+        "author_uid": { "type": "string", "description": "UID of the author for notifications" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Approval status" },
+        "likes_count": { "type": "integer", "description": "Number of likes" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of publishing" }
+      },
+      "required": ["title", "content", "status", "created_at"]
+    },
+    "UserProgress": {
+      "title": "User Progress",
+      "description": "Tracks completed study topics",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string", "description": "UID of the student" },
+        "topic_id": { "type": "string", "description": "ID of the completed topic" },
+        "category_id": { "type": "string", "description": "Category of the topic" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of completion" }
+      },
+      "required": ["user_id", "topic_id", "category_id", "created_at"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User alerts and updates",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string", "description": "Recipient UID" },
+        "title": { "type": "string", "description": "Alert title" },
+        "message": { "type": "string", "description": "Alert content" },
+        "type": { "type": "string", "enum": ["like", "new_article", "system"], "description": "Type of alert" },
+        "read": { "type": "boolean", "description": "Read status" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of alert" }
+      },
+      "required": ["user_id", "title", "message", "type", "read", "created_at"]
+    },
+    "StudyGroup": {
+      "title": "Study Group",
+      "description": "Departmental chat rooms",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Group name (e.g. Computer Science)" },
+        "department": { "type": "string", "description": "Associated department" },
+        "description": { "type": "string", "description": "Group purpose" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Creation time" }
+      },
+      "required": ["name", "department", "created_at"]
+    },
+    "GroupMessage": {
+      "title": "Group Message",
+      "description": "Messages within a study group",
+      "type": "object",
+      "properties": {
+        "group_id": { "type": "string", "description": "Parent group ID" },
+        "user_id": { "type": "string", "description": "Sender UID" },
+        "user_name": { "type": "string", "description": "Sender name" },
+        "content": { "type": "string", "description": "Message text" },
+        "is_ai": { "type": "boolean", "description": "Whether message is from Gemini" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Time of message" }
+      },
+      "required": ["group_id", "user_id", "user_name", "content", "created_at"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": "UserProfile",
+      "description": "Student profile documents"
+    },
+    "/social_posts/{postId}": {
+      "schema": "SocialPost",
+      "description": "Public social feed posts"
+    },
+    "/timetables/{timetableId}": {
+      "schema": "Timetable",
+      "description": "Personal study schedules"
+    },
+    "/cgpa_records/{recordId}": {
+      "schema": "CGPARecord",
+      "description": "Personal CGPA tracking records"
+    },
+    "/curated_articles/{articleId}": {
+      "schema": "CuratedArticle",
+      "description": "Public academic articles"
+    },
+    "/user_progress/{progressId}": {
+      "schema": "UserProgress",
+      "description": "Records of completed study topics"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User alerts"
+    },
+    "/study_groups/{groupId}": {
+      "schema": "StudyGroup",
+      "description": "Departmental rooms"
+    },
+    "/study_groups/{groupId}/messages/{messageId}": {
+      "schema": "GroupMessage",
+      "description": "Chat messages"
+    }
+  }
+}

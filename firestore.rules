@@ -1,0 +1,167 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: profiles
+    // Document ID: userId (auth.uid)
+    // Fields:
+    //   - full_name: string (optional)
+    //   - university: string (optional)
+    //   - department: string (optional)
+    //   - selected_tech_track: string (optional)
+    //   - updated_at: timestamp (required)
+    //
+    // Collection: social_posts
+    // Document ID: postId (auto-generated)
+    // Fields:
+    //   - user_id: string (required, auth.uid)
+    //   - user_email: string (required)
+    //   - content: string (required, max 1000 chars)
+    //   - created_at: timestamp (required)
+    //
+    // Collection: timetables
+    // Document ID: timetableId (auto-generated)
+    // Fields:
+    //   - user_id: string (required, auth.uid)
+    //   - goal: string (required)
+    //   - data: map (required)
+    //   - created_at: timestamp (required)
+    //
+    // Collection: cgpa_records
+    // Document ID: recordId (auto-generated)
+    // Fields:
+    //   - user_id: string (required, auth.uid)
+    //   - semester_label: string (required)
+    //   - gpa: number (required)
+    //   - units: number (required)
+    //   - courses: list (required)
+    //   - created_at: timestamp (required)
+    //
+    // Collection: curated_articles
+    // Document ID: articleId (auto-generated)
+    // Fields:
+    //   - title: string (required)
+    //   - excerpt: string (optional)
+    //   - content: string (required)
+    //   - category: string (optional)
+    //   - author_name: string (optional)
+    //   - suggested_by: string (optional)
+    //   - status: string (required, 'pending' | 'approved' | 'rejected')
+    //   - likes_count: number (required)
+    //   - created_at: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.user_id;
+    }
+    
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin' ||
+         request.auth.token.email == "aminudanielkaltungo@gmail.com");
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /profiles/{userId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isOwner(userId) && 
+        request.resource.data.keys().hasAll(['updated_at']) &&
+        request.resource.data.updated_at is timestamp;
+      allow delete: if isAdmin();
+    }
+
+    match /social_posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+        request.resource.data.user_id == request.auth.uid &&
+        request.resource.data.content is string && 
+        request.resource.data.content.size() <= 1000 &&
+        request.resource.data.created_at == request.time;
+      allow update, delete: if isDocOwner() || isAdmin();
+    }
+
+    match /timetables/{timetableId} {
+      allow read: if isAuthenticated() && (resource.data.user_id == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+        request.resource.data.user_id == request.auth.uid &&
+        request.resource.data.created_at == request.time;
+      allow update, delete: if isDocOwner() || isAdmin();
+    }
+
+    match /cgpa_records/{recordId} {
+      allow read: if isAuthenticated() && (resource.data.user_id == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+        request.resource.data.user_id == request.auth.uid &&
+        request.resource.data.created_at == request.time;
+      allow update, delete: if isDocOwner() || isAdmin();
+    }
+
+    match /curated_articles/{articleId} {
+      allow read: if isAuthenticated() && (resource.data.status == 'approved' || isAdmin());
+      allow create: if isAuthenticated() && 
+        request.resource.data.status == 'pending' &&
+        request.resource.data.likes_count == 0;
+      allow update: if isAuthenticated() && (
+        isAdmin() || 
+        (resource.data.status == 'approved' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes_count']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /article_likes/{likeId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isAuthenticated() && likeId.split('_')[0] == request.auth.uid;
+    }
+
+    match /user_progress/{progressId} {
+      allow read: if isAuthenticated() && (resource.data.user_id == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+        request.resource.data.user_id == request.auth.uid &&
+        request.resource.data.created_at == request.time;
+      allow delete: if isAuthenticated() && (resource.data.user_id == request.auth.uid || isAdmin());
+    }
+
+    match /notifications/{notificationId} {
+      allow read, update: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow create: if isAuthenticated(); // System or other users can create notifications
+      allow delete: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+    }
+
+    match /study_groups/{groupId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+      
+      match /messages/{messageId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && 
+          request.resource.data.user_id == request.auth.uid &&
+          request.resource.data.created_at == request.time;
+        allow delete: if isAdmin() || (resource.data.user_id == request.auth.uid);
+      }
+    }
+  }
+}

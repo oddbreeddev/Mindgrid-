@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { STUDY_CATEGORIES, StudyCategory } from '../constants';
 import { generateLessonContent } from '../services/geminiService';
 import { getCachedLesson, saveLessonToCache } from '../services/dataService';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../services/supabase';
+import { db } from '../src/firebase';
+import { collection, query, where, getDocs, addDoc, deleteDoc, serverTimestamp, doc } from 'firebase/firestore';
 import { LessonContent, SyllabusSubject, SyllabusTopic } from '../types';
 
 const StudyPage: React.FC = () => {
@@ -47,8 +48,14 @@ const StudyPage: React.FC = () => {
         if (localProgress) setCompletedTopics(new Set(JSON.parse(localProgress)));
         return;
       }
-      const { data } = await supabase.from('user_progress').select('topic_id').eq('user_id', user.id);
-      if (data) setCompletedTopics(new Set(data.map((p: any) => p.topic_id)));
+      try {
+        const q = query(collection(db, 'user_progress'), where('user_id', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        const topicIds = querySnapshot.docs.map(doc => doc.data().topic_id);
+        setCompletedTopics(new Set(topicIds));
+      } catch (error) {
+        console.error("Error fetching progress:", error);
+      }
     };
     fetchProgress();
   }, [user]);
@@ -115,9 +122,21 @@ const StudyPage: React.FC = () => {
     try {
       if (user) {
         if (!isCurrentlyCompleted) {
-          await supabase.from('user_progress').insert({ user_id: user.id, topic_id: topicId, category_id: activeCategory?.id || 'general' });
+          await addDoc(collection(db, 'user_progress'), {
+            user_id: user.uid,
+            topic_id: topicId,
+            category_id: activeCategory?.id || 'general',
+            created_at: serverTimestamp()
+          });
         } else {
-          await supabase.from('user_progress').delete().eq('user_id', user.id).eq('topic_id', topicId);
+          const q = query(
+            collection(db, 'user_progress'), 
+            where('user_id', '==', user.uid), 
+            where('topic_id', '==', topicId)
+          );
+          const querySnapshot = await getDocs(q);
+          const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, 'user_progress', d.id)));
+          await Promise.all(deletePromises);
         }
       } else {
         localStorage.setItem('mindgrid_local_progress', JSON.stringify(Array.from(newCompletedTopics)));
@@ -125,6 +144,7 @@ const StudyPage: React.FC = () => {
       setCompletedTopics(newCompletedTopics);
       showToast(isCurrentlyCompleted ? 'Marked as uncompleted' : 'Lesson completed!', 'success');
     } catch (err) {
+      console.error("Progress sync failed:", err);
       showToast('Progress sync failed.', 'error');
     } finally {
       setIsSavingProgress(false);
@@ -270,20 +290,20 @@ const StudyPage: React.FC = () => {
             </header>
 
             <div className="prose prose-slate prose-sm md:prose-base max-w-none">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{lesson.theory}</ReactMarkdown>
+              <Markdown remarkPlugins={[remarkGfm]}>{lesson.theory}</Markdown>
             </div>
 
             <div className="bg-slate-900 p-6 md:p-10 rounded-[1.5rem] text-white shadow-xl">
               <h2 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4">Examples</h2>
               <div className="prose prose-invert prose-sm max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{lesson.examples}</ReactMarkdown>
+                <Markdown remarkPlugins={[remarkGfm]}>{lesson.examples}</Markdown>
               </div>
             </div>
 
             <div className="bg-blue-50 p-6 rounded-[1.5rem] border border-blue-100/50">
               <h2 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-2">School Gist</h2>
               <div className="text-blue-800 text-sm leading-relaxed">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{lesson.naijaContext}</ReactMarkdown>
+                <Markdown remarkPlugins={[remarkGfm]}>{lesson.naijaContext}</Markdown>
               </div>
             </div>
 

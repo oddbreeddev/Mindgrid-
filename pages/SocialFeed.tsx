@@ -3,16 +3,81 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, Sparkles, MessageSquare, Heart, Share2, MoreHorizontal } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getSocialPosts, createSocialPost } from '../services/dataService';
-import { supabase } from '../services/supabase';
+import { getSocialPosts, createSocialPost, toggleLikePost, checkIfPostLiked } from '../services/dataService';
+import { db } from '../src/firebase';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 
 interface Post {
   id: string;
   user_id: string;
   user_email: string;
   content: string;
-  created_at: string;
+  likes_count?: number;
+  created_at: any;
 }
+
+const PostItem: React.FC<{ post: Post; user: any; idx: number; formatTime: (t: any) => string; getUserInitials: (e: string) => string }> = ({ post, user, idx, formatTime, getUserInitials }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+
+  useEffect(() => {
+    if (user) {
+      checkIfPostLiked(post.id, user.uid).then(setIsLiked);
+    }
+  }, [post.id, user]);
+
+  const handleLike = async () => {
+    if (!user) return;
+    const result = await toggleLikePost(post.id, user.uid, post.user_id);
+    if (result) {
+      setIsLiked(result.liked);
+      setLikesCount(prev => result.liked ? prev + 1 : prev - 1);
+    }
+  };
+
+  return (
+    <div 
+      className="bg-white/5 border border-white/5 p-6 rounded-[2.5rem] hover:bg-white/[0.08] transition-all duration-300 animate-in group"
+      style={{ animationDelay: `${0.2 + idx * 0.05}s` }}
+    >
+      <div className="flex gap-4">
+        <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-blue-400 font-black text-xs shrink-0">
+          {getUserInitials(post.user_email)}
+        </div>
+        <div className="flex-grow">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <span className="font-black text-sm text-white">{post.user_email.split('@')[0]}</span>
+              <span className="text-gray-600 text-[10px] font-bold">@{post.user_email.substring(0, 4)}...</span>
+              <span className="text-gray-600 text-[10px]">•</span>
+              <span className="text-gray-600 text-[10px]">{formatTime(post.created_at)}</span>
+            </div>
+            <button className="text-gray-600 hover:text-white transition-colors">
+              <MoreHorizontal size={14} />
+            </button>
+          </div>
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            {post.content}
+          </p>
+          <div className="flex items-center gap-8 text-gray-600">
+            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors text-xs font-bold">
+              <MessageSquare size={14} /> 0
+            </button>
+            <button 
+              onClick={handleLike}
+              className={`flex items-center gap-1.5 transition-colors text-xs font-bold ${isLiked ? 'text-red-500' : 'hover:text-red-500'}`}
+            >
+              <Heart size={14} fill={isLiked ? 'currentColor' : 'none'} /> {likesCount}
+            </button>
+            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors text-xs font-bold">
+              <Share2 size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const SocialFeed: React.FC = () => {
   const { user } = useAuth();
@@ -24,27 +89,29 @@ const SocialFeed: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadPosts();
-
-    // Subscribe to realtime updates
-    const channel = supabase
-      .channel('public:social_posts')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'social_posts' }, (payload: any) => {
-        setPosts(prev => [payload.new as Post, ...prev]);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const loadPosts = async () => {
     setLoading(true);
-    const data = await getSocialPosts();
-    setPosts(data as Post[]);
-    setLoading(false);
-  };
+    
+    // Subscribe to realtime updates using Firestore onSnapshot
+    const q = query(
+      collection(db, 'social_posts'),
+      orderBy('created_at', 'desc'),
+      limit(50)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newPosts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Post[];
+      setPosts(newPosts);
+      setLoading(false);
+    }, (error) => {
+      console.error("Firestore Snapshot Error:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +119,7 @@ const SocialFeed: React.FC = () => {
 
     setIsPosting(true);
     try {
-      await createSocialPost(user.id, user.email || 'Anonymous', content.trim());
+      await createSocialPost(user.uid, user.email || 'Anonymous', content.trim());
       setContent('');
       showToast('Post beamed to the Grid!', 'success');
     } catch (err) {
@@ -66,8 +133,9 @@ const SocialFeed: React.FC = () => {
     return email.substring(0, 2).toUpperCase();
   };
 
-  const formatTime = (dateStr: string) => {
-    const date = new Date(dateStr);
+  const formatTime = (createdAt: any) => {
+    if (!createdAt) return 'now';
+    const date = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
     const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
 
@@ -132,44 +200,14 @@ const SocialFeed: React.FC = () => {
           ))
         ) : posts.length > 0 ? (
           posts.map((post, idx) => (
-            <div 
+            <PostItem 
               key={post.id} 
-              className="bg-white/5 border border-white/5 p-6 rounded-[2.5rem] hover:bg-white/[0.08] transition-all duration-300 animate-in group"
-              style={{ animationDelay: `${0.2 + idx * 0.05}s` }}
-            >
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-blue-400 font-black text-xs shrink-0">
-                  {getUserInitials(post.user_email)}
-                </div>
-                <div className="flex-grow">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-black text-sm text-white">{post.user_email.split('@')[0]}</span>
-                      <span className="text-gray-600 text-[10px] font-bold">@{post.user_email.substring(0, 4)}...</span>
-                      <span className="text-gray-600 text-[10px]">•</span>
-                      <span className="text-gray-600 text-[10px]">{formatTime(post.created_at)}</span>
-                    </div>
-                    <button className="text-gray-600 hover:text-white transition-colors">
-                      <MoreHorizontal size={14} />
-                    </button>
-                  </div>
-                  <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                    {post.content}
-                  </p>
-                  <div className="flex items-center gap-8 text-gray-600">
-                    <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors text-xs font-bold">
-                      <MessageSquare size={14} /> 12
-                    </button>
-                    <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors text-xs font-bold">
-                      <Heart size={14} /> 24
-                    </button>
-                    <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors text-xs font-bold">
-                      <Share2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              post={post} 
+              user={user} 
+              idx={idx} 
+              formatTime={formatTime} 
+              getUserInitials={getUserInitials} 
+            />
           ))
         ) : (
           <div className="text-center py-20 bg-white/5 rounded-[3rem] border border-white/5 border-dashed">

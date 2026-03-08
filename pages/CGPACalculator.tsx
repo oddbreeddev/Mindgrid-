@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { GRADE_SCALE_5 } from '../constants';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { supabase } from '../services/supabase';
+import { db } from '../src/firebase';
+import { collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import ShareButton from '../components/ShareButton';
 
 interface Course {
@@ -27,16 +28,21 @@ const CGPACalculator: React.FC = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       if (user) {
-        const { data } = await supabase
-          .from('cgpa_records')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-        if (data) {
-          setCourses(data.courses);
-          return;
+        try {
+          const q = query(
+            collection(db, 'cgpa_records'),
+            where('user_id', '==', user.uid),
+            orderBy('created_at', 'desc'),
+            limit(1)
+          );
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const data = querySnapshot.docs[0].data();
+            setCourses(data.courses);
+            return;
+          }
+        } catch (e) {
+          console.error("Error loading CGPA records:", e);
         }
       }
       const saved = localStorage.getItem('mindgrid_local_cgpa');
@@ -67,15 +73,17 @@ const CGPACalculator: React.FC = () => {
     if (!user) return;
     setIsSyncing(true);
     try {
-      await supabase.from('cgpa_records').insert({
-        user_id: user.id,
+      await addDoc(collection(db, 'cgpa_records'), {
+        user_id: user.uid,
         semester_label: `Semester ${new Date().toLocaleDateString()}`,
         gpa: cgpa,
         units: totalUnits,
-        courses: courses
+        courses: courses,
+        created_at: serverTimestamp()
       });
       showToast('Record synced to cloud!', 'success');
     } catch (err) {
+      console.error("Cloud sync failed:", err);
       showToast('Cloud sync failed.', 'error');
     } finally { setIsSyncing(false); }
   };

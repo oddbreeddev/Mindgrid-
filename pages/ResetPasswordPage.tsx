@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { supabase } from '../services/supabase';
+import { auth } from '../src/firebase';
+import { updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 
@@ -17,10 +18,15 @@ const ResetPasswordPage: React.FC = () => {
       return;
     }
 
+    const user = auth.currentUser;
+    if (!user) {
+      showToast('You must be logged in to change your password.', 'error');
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error) throw error;
+      await updatePassword(user, password);
       showToast('Password updated successfully!', 'success');
       navigate('/login');
     } catch (error: any) {

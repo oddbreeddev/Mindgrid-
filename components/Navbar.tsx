@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Cpu, Menu, X, MessageCircle } from 'lucide-react';
+import { Cpu, Menu, X, MessageCircle, User, BookOpen } from 'lucide-react';
 import { NAV_LINKS } from '../constants';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 
 interface NavbarProps {
   onOpenNewsletter: () => void;
@@ -31,17 +32,30 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
         
         <div className="hidden md:flex items-center space-x-8">
           {isAuthenticated && (
-            <Link
-              to="/feed"
-              className={`${
-                location.pathname === '/feed'
-                  ? 'text-blue-500'
-                  : 'text-gray-400 hover:text-blue-400'
-              } text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-colors`}
-            >
-              <MessageCircle size={16} />
-              Feed
-            </Link>
+            <>
+              <Link
+                to="/feed"
+                className={`${
+                  location.pathname === '/feed'
+                    ? 'text-blue-500'
+                    : 'text-gray-400 hover:text-blue-400'
+                } text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-colors`}
+              >
+                <MessageCircle size={16} />
+                Feed
+              </Link>
+              <Link
+                to="/study-groups"
+                className={`${
+                  location.pathname === '/study-groups'
+                    ? 'text-blue-500'
+                    : 'text-gray-400 hover:text-blue-400'
+                } text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-colors`}
+              >
+                <BookOpen size={16} />
+                Rooms
+              </Link>
+            </>
           )}
 
           {NAV_LINKS.map((link) => (
@@ -82,6 +96,14 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
           
           {isAuthenticated ? (
             <div className="flex items-center gap-6">
+              <NotificationBell />
+              <Link 
+                to="/profile"
+                className="text-gray-500 hover:text-blue-500 transition-colors"
+                aria-label="Profile"
+              >
+                <User size={20} />
+              </Link>
               <button 
                 onClick={signOut}
                 className="text-gray-500 hover:text-red-500 text-xs font-bold uppercase transition-colors"
@@ -122,14 +144,32 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
           <div className="md:hidden fixed top-0 right-0 bottom-0 w-[80%] max-w-[300px] bg-[#0a0a0a] z-[70] p-8 pt-24 border-l border-white/5 animate-in slide-in-from-right shadow-2xl overflow-y-auto">
             <div className="flex flex-col gap-6">
               {isAuthenticated && (
-                <Link
-                  to="/feed"
-                  onClick={() => setIsOpen(false)}
-                  className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
-                >
-                  <MessageCircle size={24} />
-                  Scholars Feed
-                </Link>
+                <>
+                  <Link
+                    to="/feed"
+                    onClick={() => setIsOpen(false)}
+                    className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
+                  >
+                    <MessageCircle size={24} />
+                    Scholars Feed
+                  </Link>
+                  <Link
+                    to="/study-groups"
+                    onClick={() => setIsOpen(false)}
+                    className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
+                  >
+                    <BookOpen size={24} />
+                    Study Rooms
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
+                  >
+                    <User size={24} />
+                    My Profile
+                  </Link>
+                </>
               )}
               {NAV_LINKS.map((link) => (
                 <Link
