@@ -18,6 +18,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    target: 'es2015',
     rollupOptions: {
       input: './index.html'
     }

@@ -58,9 +58,19 @@ const TitleManager: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  console.log("MindGrid: App rendering...");
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
   const { user, isAdmin } = useAuth();
   const isAuthenticated = !!(user || isAdmin);
+  
+  useEffect(() => {
+    console.log("MindGrid: App mounted.");
+    const debugDiv = document.getElementById('mobile-debug');
+    if (debugDiv) {
+      debugDiv.style.background = 'rgba(0, 255, 0, 0.5)';
+      debugDiv.innerHTML += '<br>App Mounted Successfully!';
+    }
+  }, []);
 
   // Function to show the modal again after a delay
   const scheduleNextPopup = useCallback(() => {
