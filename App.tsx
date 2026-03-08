@@ -24,6 +24,7 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
@@ -131,6 +132,7 @@ const App: React.FC = () => {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
             </Routes>
           </Suspense>
         </main>

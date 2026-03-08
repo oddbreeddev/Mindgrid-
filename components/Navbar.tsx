@@ -103,54 +103,62 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
         <div className="md:hidden flex items-center">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-400 hover:text-white p-2"
+            className="text-gray-400 hover:text-white p-2 z-[80] relative"
             aria-expanded={isOpen}
             aria-label="Toggle menu"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden fixed top-20 left-0 right-0 bottom-0 bg-[#050505] z-[70] p-8 border-t border-white/5 animate-in slide-in-from-top-4">
-          <div className="flex flex-col gap-6">
-            {isAuthenticated && (
-              <Link
-                to="/feed"
-                onClick={() => setIsOpen(false)}
-                className="text-xl font-bold text-blue-500 flex items-center gap-3"
-              >
-                <MessageCircle size={24} />
-                Scholars Feed
-              </Link>
-            )}
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className="text-xl font-bold text-gray-400 hover:text-blue-500"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="pt-8 border-t border-white/5 flex flex-col gap-4">
-              {isAuthenticated ? (
-                 <button onClick={signOut} className="text-left text-xl font-bold text-red-500">Sign Out</button>
-              ) : (
+        <>
+          <div 
+            className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[65]" 
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="md:hidden fixed top-0 right-0 bottom-0 w-[80%] max-w-[300px] bg-[#0a0a0a] z-[70] p-8 pt-24 border-l border-white/5 animate-in slide-in-from-right shadow-2xl overflow-y-auto">
+            <div className="flex flex-col gap-6">
+              {isAuthenticated && (
                 <Link
-                  to="/login"
+                  to="/feed"
                   onClick={() => setIsOpen(false)}
-                  className="bg-blue-600 text-white py-4 rounded-xl text-center font-bold"
+                  className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
                 >
-                  Login
+                  <MessageCircle size={24} />
+                  Scholars Feed
                 </Link>
               )}
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold p-2 rounded-xl transition-colors ${
+                    location.pathname === link.path ? 'text-blue-500 bg-white/5' : 'text-gray-400 hover:text-blue-500'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="pt-8 border-t border-white/5 flex flex-col gap-4">
+                {isAuthenticated ? (
+                   <button onClick={() => { signOut(); setIsOpen(false); }} className="text-left text-xl font-bold text-red-500 p-2">Sign Out</button>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="bg-blue-600 text-white py-4 rounded-2xl text-center font-bold shadow-lg shadow-blue-600/20"
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </nav>
   );

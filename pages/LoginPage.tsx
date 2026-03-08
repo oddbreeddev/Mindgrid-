@@ -34,7 +34,13 @@ const LoginPage: React.FC = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/#/login`
+          }
+        });
         if (error) throw error;
         setMessage('Check your email for confirmation link!');
         showToast('Account created! Check email.', 'info');
@@ -60,7 +66,7 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`,
+        redirectTo: `${window.location.origin}/#/reset-password`,
       });
       if (error) throw error;
       setMessage('Password reset link sent to your email!');

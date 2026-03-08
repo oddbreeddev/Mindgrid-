@@ -295,7 +295,6 @@ const ArchiveCard = ({ article, onClick, i }: any) => (
         title={article.title}
         text={`Sharing MindGrid Entry: ${article.title}`}
         variant="ghost"
-        iconOnly
       />
     </div>
     <h3 className="text-sm font-black text-slate-800 mb-2 line-clamp-2">{article.title}</h3>

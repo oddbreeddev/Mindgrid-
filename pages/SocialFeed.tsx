@@ -29,7 +29,7 @@ const SocialFeed: React.FC = () => {
     // Subscribe to realtime updates
     const channel = supabase
       .channel('public:social_posts')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'social_posts' }, (payload) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'social_posts' }, (payload: any) => {
         setPosts(prev => [payload.new as Post, ...prev]);
       })
       .subscribe();

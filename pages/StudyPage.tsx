@@ -48,7 +48,7 @@ const StudyPage: React.FC = () => {
         return;
       }
       const { data } = await supabase.from('user_progress').select('topic_id').eq('user_id', user.id);
-      if (data) setCompletedTopics(new Set(data.map(p => p.topic_id)));
+      if (data) setCompletedTopics(new Set(data.map((p: any) => p.topic_id)));
     };
     fetchProgress();
   }, [user]);

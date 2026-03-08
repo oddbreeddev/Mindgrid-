@@ -29,11 +29,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Check active Supabase sessions
     supabase.auth.getSession()
-      .then(({ data: { session } }) => {
+      .then(({ data: { session } }: any) => {
         setUser(session?.user ?? null);
         if (session?.user) fetchProfile(session.user.id);
       })
-      .catch(err => {
+      .catch((err: any) => {
         console.error("Supabase Session Error:", err);
       })
       .finally(() => {
@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null);
       if (session?.user) fetchProfile(session.user.id);
       else setProfile(null);

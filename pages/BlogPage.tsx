@@ -115,7 +115,6 @@ const BlogPage: React.FC = () => {
                         title={cleanText(post.title)} 
                         text={`Latest Update from MindGrid: ${cleanText(post.title)}`}
                         url={post.url}
-                        iconOnly
                       />
                     </div>
                     <h2 className="text-2xl font-black text-slate-800 mb-3 leading-tight group-hover:text-green-600 transition-colors">{cleanText(post.title)}</h2>

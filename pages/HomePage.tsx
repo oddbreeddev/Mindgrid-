@@ -139,7 +139,7 @@ const HomePage: React.FC = () => {
                 <span>New: Tech Career Roadmaps for 2026</span>
               </div>
 
-              <h1 className="text-5xl lg:text-8xl font-black leading-[1.1] tracking-tight text-white">
+              <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black leading-[1.1] tracking-tight text-white">
                 Education <br />
                 meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">Innovation</span>
               </h1>
@@ -239,16 +239,16 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Footer CTA */}
-      <section className="max-w-7xl mx-auto px-4 py-40">
-        <div className="bg-blue-600 rounded-[5rem] p-20 md:p-32 text-center text-white relative overflow-hidden shadow-[0_0_100px_-10px_rgba(37,99,235,0.4)]">
-          <div className="relative z-10 space-y-12">
-            <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none text-white">Ready for the <br/><span className="text-[#050505] italic">Grid?</span></h2>
-            <p className="text-blue-100 text-xl max-w-xl mx-auto font-medium opacity-80">Join 50,000+ Nigerian scholars building their legacy on MindGrid today.</p>
-            <div className="flex flex-row gap-4 justify-center">
-              <Link to="/login" className="flex-1 sm:flex-none bg-[#050505] text-white px-14 py-6 rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:bg-white hover:text-slate-950 transition-all active:scale-95 shadow-2xl">
+      <section className="max-w-7xl mx-auto px-4 py-20 md:py-40">
+        <div className="bg-blue-600 rounded-[3rem] md:rounded-[5rem] p-12 md:p-32 text-center text-white relative overflow-hidden shadow-[0_0_100px_-10px_rgba(37,99,235,0.4)]">
+          <div className="relative z-10 space-y-8 md:space-y-12">
+            <h2 className="text-5xl md:text-9xl font-black tracking-tighter leading-none text-white">Ready for the <br/><span className="text-[#050505] italic">Grid?</span></h2>
+            <p className="text-blue-100 text-lg md:text-xl max-w-xl mx-auto font-medium opacity-80">Join 50,000+ Nigerian scholars building their legacy on MindGrid today.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/login" className="bg-[#050505] text-white px-10 md:px-14 py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-black text-[11px] uppercase tracking-widest hover:bg-white hover:text-slate-950 transition-all active:scale-95 shadow-2xl">
                 Join Now
               </Link>
-              <button className="flex-1 sm:flex-none bg-white/10 border border-white/20 text-white px-14 py-6 rounded-[2rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
+              <button className="bg-white/10 border border-white/20 text-white px-10 md:px-14 py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
                 <Share2 size={16} /> Share
               </button>
             </div>

@@ -1,28 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
-body {
-  background-color: #050505;
-  color: #f8fafc;
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-[#050505] text-[#f8fafc] antialiased overflow-x-hidden;
+    font-size: 16px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
 }
 
-.soft-glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+@layer components {
+  .soft-glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .animate-in {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+
+  .mobile-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-up {
-  animation: slideUp 0.5s ease-out forwards;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-
-.no-scrollbar::-webkit-scrollbar { display: none; }

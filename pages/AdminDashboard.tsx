@@ -41,13 +41,13 @@ const AdminDashboard: React.FC = () => {
         .on(
           'postgres_changes', 
           { event: 'INSERT', schema: 'public', table: 'newsletter_subscribers' }, 
-          (payload) => {
+          (payload: any) => {
             setSubscribers(prev => [payload.new, ...prev]);
             setStats(prev => ({ ...prev, subscribers: prev.subscribers + 1 }));
             showToast(`New ${payload.new.platform} node linked!`, 'info');
           }
         )
-        .subscribe((status) => {
+        .subscribe((status: any) => {
           setIsLive(status === 'SUBSCRIBED');
         });
 

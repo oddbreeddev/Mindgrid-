@@ -5,13 +5,36 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = 'https://rsvvkwsqvoukjjflnqcu.supabase.co';
 const supabaseAnonKey = 'sb_publishable_8DCplz8MO7FPRPG-DYQX5g_RvxDgtzo';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  }
-});
+let supabaseInstance: any;
+
+try {
+  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    }
+  });
+} catch (error) {
+  console.error("Supabase Initialization Error:", error);
+  // Fallback to a dummy client that doesn't crash the app
+  supabaseInstance = {
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signOut: async () => ({ error: null }),
+    },
+    from: () => ({
+      select: () => ({ eq: () => ({ single: () => ({ data: null, error: null }) }), order: () => ({ limit: () => ({ single: () => ({ data: null, error: null }) }) }) }),
+      insert: () => ({ select: () => ({ single: () => ({ data: null, error: null }) }) }),
+      upsert: () => ({}),
+    }),
+    channel: () => ({ on: () => ({ subscribe: () => ({}) }) }),
+    removeChannel: () => ({}),
+  };
+}
+
+export const supabase = supabaseInstance;
 
 /**
  * DATABASE SCHEMA REMINDER (Run in Supabase SQL Editor):
