@@ -101,7 +101,27 @@ service cloud.firestore {
         request.resource.data.content is string && 
         request.resource.data.content.size() <= 1000 &&
         request.resource.data.created_at == request.time;
-      allow update, delete: if isDocOwner() || isAdmin();
+      allow update: if isAuthenticated() && (
+        isDocOwner() || 
+        isAdmin() ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes_count'])
+      );
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /post_likes/{likeId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isAuthenticated() && likeId.split('_')[0] == request.auth.uid;
+    }
+
+    match /newsletter_subscribers/{email} {
+      allow read: if isAdmin();
+      allow create, update: if true; // Allow anyone to subscribe
+    }
+
+    match /broadcast_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
     }
 
     match /timetables/{timetableId} {
@@ -151,16 +171,34 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && resource.data.user_id == request.auth.uid;
     }
 
-    match /study_groups/{groupId} {
-      allow read: if isAuthenticated();
-      allow create, update, delete: if isAdmin();
+    match /study_rooms/{roomId} {
+      allow read: if isAuthenticated() && (
+        resource.data.is_private == false || 
+        request.auth.uid in resource.data.members ||
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        resource.data.owner_id == request.auth.uid || 
+        isAdmin() ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members']) && request.auth.uid in request.resource.data.members)
+      );
+      allow delete: if isAdmin() || resource.data.owner_id == request.auth.uid;
       
-      match /messages/{messageId} {
-        allow read: if isAuthenticated();
-        allow create: if isAuthenticated() && 
-          request.resource.data.user_id == request.auth.uid &&
-          request.resource.data.created_at == request.time;
-        allow delete: if isAdmin() || (resource.data.user_id == request.auth.uid);
+      match /topics/{topicId} {
+        allow read: if isAuthenticated(); // Inherits room access logic in practice if queried via room
+        allow create, update, delete: if isAuthenticated() && (
+          get(/databases/$(database)/documents/study_rooms/$(roomId)).data.owner_id == request.auth.uid ||
+          isAdmin()
+        );
+
+        match /messages/{messageId} {
+          allow read: if isAuthenticated();
+          allow create: if isAuthenticated() && 
+            request.resource.data.user_id == request.auth.uid &&
+            request.resource.data.created_at == request.time;
+          allow delete: if isAdmin() || (resource.data.user_id == request.auth.uid);
+        }
       }
     }
   }

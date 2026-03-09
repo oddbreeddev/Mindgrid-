@@ -147,8 +147,9 @@ const AdminDashboard: React.FC = () => {
     // Step 2: Simulate delivery to each node
     for (let i = 0; i < total; i++) {
       const sub = targets[i];
-      await new Promise(r => setTimeout(r, 100)); // Simulate API call to email/wa service
-      setDeliveryStatus(prev => [`Node ${sub.email} transmitted via ${sub.platform.toUpperCase()}`, ...prev.slice(0, 50)]);
+      // Simulate real transmission delay
+      await new Promise(r => setTimeout(r, 150)); 
+      setDeliveryStatus(prev => [`[${new Date().toLocaleTimeString()}] Node ${sub.email} transmitted via ${sub.platform.toUpperCase()}`, ...prev.slice(0, 49)]);
       setProgress(Math.round(((i + 1) / total) * 100));
     }
 
@@ -306,9 +307,9 @@ const AdminDashboard: React.FC = () => {
               {view === 'history' && 'Broadcast Archive'}
             </h1>
             {isLive && (
-              <div className="flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full border border-green-100">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                <span className="text-[8px] font-black uppercase text-green-600 tracking-widest">Live Signal</span>
+              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                <span className="text-[8px] font-black uppercase text-blue-600 tracking-widest">Live Signal</span>
               </div>
             )}
           </div>
@@ -325,8 +326,8 @@ const AdminDashboard: React.FC = () => {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
-              { label: 'Subscribers', val: stats.subscribers, icon: 'fa-rss', color: 'text-green-600', bg: 'bg-green-50' },
-              { label: 'Students', val: stats.students, icon: 'fa-user-graduate', color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: 'Subscribers', val: stats.subscribers, icon: 'fa-rss', color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: 'Students', val: stats.students, icon: 'fa-user-graduate', color: 'text-indigo-600', bg: 'bg-indigo-50' },
               { label: 'Ops Pulse', val: stats.academicOperations, icon: 'fa-bolt', color: 'text-amber-600', bg: 'bg-amber-50' },
               { label: 'Knowledge', val: stats.knowledgeEntries, icon: 'fa-brain', color: 'text-purple-600', bg: 'bg-purple-50' }
             ].map((item, i) => (
@@ -388,7 +389,7 @@ const AdminDashboard: React.FC = () => {
                           <tr key={s.id || i} className="group hover:bg-slate-50/50 transition-all">
                             <td className="px-6 py-4 font-bold text-slate-700 text-sm">{s.email}</td>
                             <td className="px-6 py-4">
-                              <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-lg ${s.platform === 'whatsapp' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>{s.platform}</span>
+                              <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-lg ${s.platform === 'whatsapp' ? 'bg-blue-100 text-blue-600' : 'bg-blue-100 text-blue-600'}`}>{s.platform}</span>
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex flex-wrap gap-1">
@@ -439,7 +440,7 @@ const AdminDashboard: React.FC = () => {
                         <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Protocol Preview</h3>
                         <div className="flex bg-slate-100 p-1 rounded-xl">
                           <button onClick={() => setPreviewMode('email')} className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${previewMode === 'email' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}>Email</button>
-                          <button onClick={() => setPreviewMode('whatsapp')} className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${previewMode === 'whatsapp' ? 'bg-white shadow-sm text-green-600' : 'text-slate-400 hover:text-slate-600'}`}>WhatsApp</button>
+                          <button onClick={() => setPreviewMode('whatsapp')} className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${previewMode === 'whatsapp' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}>WhatsApp</button>
                         </div>
                       </div>
 
@@ -478,21 +479,21 @@ const AdminDashboard: React.FC = () => {
                              </div>
                            ) : (
                              <div className="flex-grow flex flex-col h-full">
-                                <div className="bg-white/5 p-6 rounded-3xl mb-6 font-medium text-sm leading-relaxed whitespace-pre-wrap border-l-4 border-green-500">
-                                  <p className="font-black text-green-400 mb-2">*{draft.subject}*</p>
+                                <div className="bg-white/5 p-6 rounded-3xl mb-6 font-medium text-sm leading-relaxed whitespace-pre-wrap border-l-4 border-blue-500">
+                                  <p className="font-black text-blue-400 mb-2">*{draft.subject}*</p>
                                   {draft.body.replace(/[#*]/g, '')}
                                 </div>
                                 <div className="mt-auto flex justify-center">
-                                  <button onClick={copyForWhatsApp} className="text-[10px] font-black uppercase bg-green-500/10 text-green-500 border border-green-500/20 px-6 py-3 rounded-xl hover:bg-green-500/20 transition-all">Copy for WhatsApp</button>
+                                  <button onClick={copyForWhatsApp} className="text-[10px] font-black uppercase bg-blue-500/10 text-blue-500 border border-blue-500/20 px-6 py-3 rounded-xl hover:bg-blue-500/20 transition-all">Copy for WhatsApp</button>
                                 </div>
                              </div>
                            )}
 
                            <div className="mt-8 pt-6 border-t border-white/5">
-                             {isBroadcasting ? (
+                             {isBroadcasting || deliveryStatus.length > 0 ? (
                                <div className="space-y-4">
                                  <div className="flex justify-between text-[10px] font-black uppercase text-slate-400">
-                                   <span>Transmitting...</span>
+                                   <span>{isBroadcasting ? 'Transmitting...' : 'Transmission Complete'}</span>
                                    <span>{progress}%</span>
                                  </div>
                                  <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
@@ -502,7 +503,7 @@ const AdminDashboard: React.FC = () => {
                              ) : (
                                <button 
                                  onClick={handleBroadcast}
-                                 className={`w-full font-black py-5 rounded-2xl transition-all shadow-xl uppercase text-xs tracking-[0.2em] active:scale-95 ${previewMode === 'email' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white'}`}
+                                 className={`w-full font-black py-5 rounded-2xl transition-all shadow-xl uppercase text-xs tracking-[0.2em] active:scale-95 ${previewMode === 'email' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
                                >
                                  Execute Broadcast
                                </button>
@@ -541,7 +542,7 @@ const AdminDashboard: React.FC = () => {
                             <div className="flex gap-2 w-full md:w-auto">
                               <button 
                                 onClick={() => handleApproveArticle(article.id)} 
-                                className="flex-1 md:flex-none text-[10px] font-black uppercase text-white bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl transition-all"
+                                className="flex-1 md:flex-none text-[10px] font-black uppercase text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl transition-all"
                               >
                                 Approve
                               </button>

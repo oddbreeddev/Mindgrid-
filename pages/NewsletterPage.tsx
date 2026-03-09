@@ -54,10 +54,10 @@ const NewsletterPage: React.FC = () => {
   if (status === 'success') {
     return (
       <div className="max-w-2xl mx-auto px-4 py-24 text-center animate-in">
-        <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center text-green-600 text-4xl mx-auto mb-8 shadow-inner animate-bounce">
+        <div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center text-blue-600 text-4xl mx-auto mb-8 shadow-inner animate-bounce">
           <i className="fas fa-check"></i>
         </div>
-        <h1 className="text-4xl font-black text-slate-800 mb-4 tracking-tight">You're in the <span className="text-green-600">Vault!</span></h1>
+        <h1 className="text-4xl font-black text-slate-800 mb-4 tracking-tight">You're in the <span className="text-blue-600">Vault!</span></h1>
         <p className="text-slate-500 text-lg mb-8">We've added your preferences to our database. Watch your {platform} for the next MindGrid Intelligence report.</p>
         <button 
           onClick={() => setStatus('idle')}
@@ -74,27 +74,27 @@ const NewsletterPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
         <div>
           <h1 className="text-5xl md:text-6xl font-black text-slate-800 mb-6 leading-tight tracking-tighter">
-            Academic <span className="text-green-600">Intelligence.</span> Delivered.
+            Academic <span className="text-blue-600">Intelligence.</span> Delivered.
           </h1>
           <p className="text-slate-500 text-lg mb-10 leading-relaxed max-w-lg">
             Join 24,000+ Nigerian students receiving personalized weekly briefs on scholarships, career pivots, and exam strategies.
           </p>
 
-          <form onSubmit={handleSubscribe} className="space-y-8 bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl border border-slate-100 border-b-8 border-b-green-600">
+          <form onSubmit={handleSubscribe} className="space-y-8 bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl border border-slate-100 border-b-8 border-b-blue-600">
             <div className="space-y-4">
               <label className="text-xs font-black text-slate-400 uppercase tracking-widest block ml-2">Preferred Destination</label>
               <div className="flex gap-4">
                 <button 
                   type="button"
                   onClick={() => setPlatform('email')}
-                  className={`flex-1 py-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-3 font-bold ${platform === 'email' ? 'border-green-600 bg-green-50 text-green-700 shadow-inner' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                  className={`flex-1 py-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-3 font-bold ${platform === 'email' ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-inner' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
                 >
                   <i className="fas fa-envelope"></i> Email
                 </button>
                 <button 
                   type="button"
                   onClick={() => setPlatform('whatsapp')}
-                  className={`flex-1 py-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-3 font-bold ${platform === 'whatsapp' ? 'border-green-600 bg-green-50 text-green-700 shadow-inner' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                  className={`flex-1 py-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-3 font-bold ${platform === 'whatsapp' ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-inner' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
                 >
                   <i className="fab fa-whatsapp"></i> WhatsApp
                 </button>
@@ -107,7 +107,7 @@ const NewsletterPage: React.FC = () => {
                 type={platform === 'email' ? 'email' : 'tel'} 
                 required
                 placeholder={platform === 'email' ? 'you@university.edu.ng' : '+234 ...'}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all font-medium"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-medium"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -133,7 +133,7 @@ const NewsletterPage: React.FC = () => {
             <button 
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-green-600 text-white font-black py-5 rounded-2xl hover:bg-green-700 transition-all shadow-xl shadow-green-200 active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]"
+              className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]"
             >
               {isSubmitting ? <i className="fas fa-spinner fa-spin mr-2"></i> : 'Activate Intelligence Feed'}
             </button>
@@ -146,7 +146,7 @@ const NewsletterPage: React.FC = () => {
                 <span className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full mb-8 inline-block shadow-lg">Last Week's Summary</span>
                 <div className="space-y-8">
                   <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 animate-in">
-                    <p className="text-[10px] font-black text-green-600 uppercase tracking-widest mb-2">#1 Scholarship Insight</p>
+                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2">#1 Scholarship Insight</p>
                     <h4 className="font-black text-slate-800 text-lg mb-2">How to bypass the 3.5 CGPA requirement for the NNPC Award.</h4>
                     <p className="text-slate-400 text-sm leading-relaxed">It turns out certain states of origin have different merit cutoff levels. Our community verified this for the 2024 cycle...</p>
                   </div>

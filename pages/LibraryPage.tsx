@@ -165,12 +165,12 @@ const LibraryPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 md:py-12 overflow-x-hidden">
       <div id="library-header" className="mb-8 md:mb-12 text-center max-w-3xl mx-auto px-2">
-        <h1 className="text-4xl md:text-6xl font-black text-slate-800 mb-4 tracking-tighter">Academic <span className="text-green-600">Archive</span></h1>
+        <h1 className="text-4xl md:text-6xl font-black text-slate-800 mb-4 tracking-tighter">Academic <span className="text-blue-600">Archive</span></h1>
         <p className="text-slate-500 text-sm md:text-lg font-medium leading-relaxed">Nigeria's premier vault of educational wisdom. Every guide is permanently archived for future scholars.</p>
       </div>
 
       <div id="library-request-section" className="bg-slate-900 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] text-white shadow-2xl mb-12 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 blur-[100px] rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full -mr-32 -mt-32"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full -ml-32 -mb-32"></div>
         
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -189,7 +189,7 @@ const LibraryPage: React.FC = () => {
               <button 
                 onClick={() => handleGenerate(suggestionTopic)}
                 disabled={isGenerating || !suggestionTopic.trim()}
-                className="bg-green-600 hover:bg-green-500 text-white font-black px-6 py-3 md:py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-widest disabled:opacity-50"
+                className="bg-blue-600 hover:bg-blue-500 text-white font-black px-6 py-3 md:py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-widest disabled:opacity-50"
               >
                 {isGenerating ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-plus"></i>}
                 {isGenerating ? 'Curating' : 'Request'}
@@ -205,8 +205,8 @@ const LibraryPage: React.FC = () => {
             </div>
             {isGenerating && (
               <div className="mt-4 flex items-center gap-2 animate-pulse justify-center md:justify-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-green-500">{genStatus}</p>
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">{genStatus}</p>
               </div>
             )}
           </div>
@@ -223,11 +223,11 @@ const LibraryPage: React.FC = () => {
                 </button>
               ))}
             </div>
-            <h3 className="text-lg font-bold mb-3 flex items-center gap-2"><i className="fas fa-search text-green-500"></i> Explorer</h3>
+            <h3 className="text-lg font-bold mb-3 flex items-center gap-2"><i className="fas fa-search text-blue-500"></i> Explorer</h3>
             <input 
               type="text" 
               placeholder="Search keywords..." 
-              className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-green-500 text-white"
+              className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 text-white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -238,7 +238,7 @@ const LibraryPage: React.FC = () => {
       {!searchQuery && activeCategory === 'All' && featured.length > 0 && (
         <section className="mb-12 md:mb-20">
           <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-widest">New <span className="text-green-600">Discoveries</span></h2>
+            <h2 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-widest">New <span className="text-blue-600">Discoveries</span></h2>
             <div className="h-px flex-grow bg-slate-200"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -267,7 +267,7 @@ const LibraryPage: React.FC = () => {
                 <button 
                   key={cat} 
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 md:px-6 md:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeCategory === cat ? 'bg-green-600 text-white shadow-xl shadow-green-200' : 'bg-white text-slate-400 border border-slate-100'}`}
+                  className={`px-4 py-2 md:px-6 md:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeCategory === cat ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-white text-slate-400 border border-slate-100'}`}
                 >
                   {cat}
                 </button>
@@ -304,7 +304,7 @@ const LibraryPage: React.FC = () => {
           <div className="bg-white w-full h-full md:h-auto md:max-w-5xl md:max-h-[95vh] md:rounded-[3.5rem] overflow-hidden flex flex-col shadow-2xl relative">
             <div className="p-6 md:p-12 border-b border-slate-100 flex justify-between items-start bg-slate-50/50 sticky top-0 z-10">
               <div className="max-w-3xl pr-8">
-                <span className="bg-green-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-block mb-3 shadow-md">
+                <span className="bg-blue-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-block mb-3 shadow-md">
                   {selectedArticle.category} Records
                 </span>
                 <h2 className="text-xl md:text-4xl font-black text-slate-800 leading-tight mb-2">{selectedArticle.title}</h2>
@@ -344,7 +344,7 @@ const LibraryPage: React.FC = () => {
             <div className="flex-grow overflow-y-auto p-6 md:p-20 scroll-smooth bg-white">
             <div id="library-article-content" className="prose prose-sm md:prose-lg max-w-none 
                 prose-h2:font-black prose-h2:text-slate-800 prose-h2:mb-4 prose-h2:mt-10 
-                prose-h3:text-green-600 prose-h3:font-black prose-h3:mt-8
+                prose-h3:text-blue-600 prose-h3:font-black prose-h3:mt-8
                 prose-p:leading-relaxed prose-p:text-slate-600 prose-p:mb-6
                 prose-strong:text-slate-900 prose-strong:font-black">
                 <Markdown remarkPlugins={[remarkGfm]}>
@@ -354,7 +354,7 @@ const LibraryPage: React.FC = () => {
 
               <div className="mt-16 p-8 md:p-12 bg-slate-900 rounded-[2rem] md:rounded-[3rem] text-white flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
                 <div className="flex items-center gap-6">
-                  <div className="w-16 h-16 bg-green-500 rounded-2xl hidden md:flex items-center justify-center text-white text-3xl shrink-0"><i className="fas fa-check-circle"></i></div>
+                  <div className="w-16 h-16 bg-blue-500 rounded-2xl hidden md:flex items-center justify-center text-white text-3xl shrink-0"><i className="fas fa-check-circle"></i></div>
                   <div>
                     <h4 className="text-xl font-black mb-1">Archival Integrity Verified</h4>
                     <p className="text-slate-400 text-xs">Stored in the MindGrid Library for all Nigerian scholars.</p>
@@ -378,7 +378,7 @@ const LibraryPage: React.FC = () => {
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/95 backdrop-blur-sm animate-in p-4">
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col">
             <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-              <h2 className="text-2xl font-black text-slate-800">Submit Your <span className="text-green-600">Article</span></h2>
+              <h2 className="text-2xl font-black text-slate-800">Submit Your <span className="text-blue-600">Article</span></h2>
               <button onClick={() => setIsSubmitModalOpen(false)} className="text-slate-400 hover:text-red-500 transition-all"><i className="fas fa-times text-xl"></i></button>
             </div>
             <form onSubmit={handleSubmitArticle} className="p-8 space-y-6 overflow-y-auto max-h-[70vh]">
@@ -388,7 +388,7 @@ const LibraryPage: React.FC = () => {
                   type="text" 
                   required
                   placeholder="e.g. My Experience with WAEC 2025"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                   value={newArticle.title}
                   onChange={(e) => setNewArticle(prev => ({ ...prev, title: e.target.value }))}
                 />
@@ -396,7 +396,7 @@ const LibraryPage: React.FC = () => {
               <div>
                 <label className="block text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest">Category</label>
                 <select 
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                   value={newArticle.category}
                   onChange={(e) => setNewArticle(prev => ({ ...prev, category: e.target.value }))}
                 >
@@ -409,7 +409,7 @@ const LibraryPage: React.FC = () => {
                   required
                   rows={10}
                   placeholder="Write your article here..."
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none resize-none"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
                   value={newArticle.content}
                   onChange={(e) => setNewArticle(prev => ({ ...prev, content: e.target.value }))}
                 />
@@ -430,9 +430,9 @@ const LibraryPage: React.FC = () => {
 };
 
 const DiscoveryCard = ({ article, onClick, onLike, isLiked, i }: any) => (
-  <article onClick={onClick} className="bg-white p-6 md:p-8 rounded-[2rem] border-b-4 border-green-500 shadow-sm hover:shadow-xl transition-all cursor-pointer group animate-in h-full flex flex-col" style={{ animationDelay: `${i * 0.1}s` }}>
+  <article onClick={onClick} className="bg-white p-6 md:p-8 rounded-[2rem] border-b-4 border-blue-500 shadow-sm hover:shadow-xl transition-all cursor-pointer group animate-in h-full flex flex-col" style={{ animationDelay: `${i * 0.1}s` }}>
     <div className="flex justify-between items-start mb-4">
-      <div className="bg-green-50 w-12 h-12 rounded-xl flex items-center justify-center text-green-600"><CategoryIcon category={article.category} /></div>
+      <div className="bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center text-blue-600"><CategoryIcon category={article.category} /></div>
       <div className="flex items-center gap-2">
         <button 
           onClick={onLike}
@@ -454,7 +454,7 @@ const DiscoveryCard = ({ article, onClick, onLike, isLiked, i }: any) => (
         <span className="text-[9px] text-slate-400 font-black uppercase">By {article.suggested_by?.split('@')[0]}</span>
         <span className="text-[9px] text-slate-400 font-black uppercase flex items-center gap-1"><i className="fas fa-heart text-red-400"></i> {article.likes_count || 0}</span>
       </div>
-      <span className="text-green-600 font-black text-[9px] uppercase tracking-widest flex items-center gap-1">Read <i className="fas fa-arrow-right"></i></span>
+      <span className="text-blue-600 font-black text-[9px] uppercase tracking-widest flex items-center gap-1">Read <i className="fas fa-arrow-right"></i></span>
     </div>
   </article>
 );
@@ -484,7 +484,7 @@ const ArchiveCard = ({ article, onClick, onLike, isLiked, i }: any) => (
         <span className="text-[7px] text-slate-400 font-bold uppercase truncate max-w-[50px]">By {article.suggested_by?.split('@')[0]}</span>
         <span className="text-[7px] text-slate-400 font-bold uppercase flex items-center gap-0.5"><i className="fas fa-heart text-red-400"></i> {article.likes_count || 0}</span>
       </div>
-      <i className="fas fa-lock text-green-600 text-[8px]"></i>
+      <i className="fas fa-lock text-blue-600 text-[8px]"></i>
     </div>
   </article>
 );

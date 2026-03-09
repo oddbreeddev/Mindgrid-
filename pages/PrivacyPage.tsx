@@ -3,7 +3,7 @@ import React from 'react';
 const PrivacyPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-black text-slate-800 mb-8">Privacy <span className="text-green-600">Policy</span></h1>
+      <h1 className="text-4xl font-black text-slate-800 mb-8">Privacy <span className="text-blue-600">Policy</span></h1>
       <div className="prose prose-slate max-w-none space-y-6 text-slate-600">
         <p className="text-sm text-slate-400 italic">Last Updated: March 2024</p>
         <p>
@@ -12,7 +12,7 @@ const PrivacyPage: React.FC = () => {
 
         <h3 className="font-bold text-slate-800 text-xl mt-8">Google AdSense & DoubleClick Cookie</h3>
         <p>
-          Google, as a third-party vendor, uses cookies to serve ads on MindGrid. Google's use of the DART cookie enables it to serve ads to our users based on their visit to MindGrid and other sites on the Internet. Users may choose to decline the use of the DART cookie by visiting the Google ad and content network Privacy Policy at the following URL – <a href="https://policies.google.com/technologies/ads" className="text-green-600 underline">https://policies.google.com/technologies/ads</a>
+          Google, as a third-party vendor, uses cookies to serve ads on MindGrid. Google's use of the DART cookie enables it to serve ads to our users based on their visit to MindGrid and other sites on the Internet. Users may choose to decline the use of the DART cookie by visiting the Google ad and content network Privacy Policy at the following URL – <a href="https://policies.google.com/technologies/ads" className="text-blue-600 underline">https://policies.google.com/technologies/ads</a>
         </p>
 
         <h3 className="font-bold text-slate-800 text-xl mt-8">Our Advertising Partners</h3>

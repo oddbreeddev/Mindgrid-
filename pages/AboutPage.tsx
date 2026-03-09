@@ -4,7 +4,7 @@ import React from 'react';
 const AboutPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-black text-slate-800 mb-8 text-center">About <span className="text-green-600">MindGrid</span></h1>
+      <h1 className="text-4xl font-black text-slate-800 mb-8 text-center">About <span className="text-blue-600">MindGrid</span></h1>
       <div className="prose prose-slate max-w-none space-y-6 text-slate-600 text-lg leading-relaxed">
         <p>
           Founded in 2024, <strong>MindGrid</strong> was born out of a simple observation: Nigerian students have the potential to change the world, but often lack the centralized resources and tools to navigate our unique educational landscape effectively.

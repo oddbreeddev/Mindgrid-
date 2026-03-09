@@ -63,7 +63,7 @@ const CareersPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 py-16">
       <div className="bg-slate-900 rounded-[3rem] p-12 text-white mb-16 relative overflow-hidden shadow-2xl">
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-black mb-6">Your Career in Nigeria Starts <span className="text-green-400">Here.</span></h1>
+          <h1 className="text-4xl md:text-5xl font-black mb-6">Your Career in Nigeria Starts <span className="text-blue-400">Here.</span></h1>
           <p className="text-slate-300 text-lg mb-8">Discover internships, graduate trainee programs, and professional opportunities from Nigeria's top employers.</p>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-grow">
@@ -79,7 +79,7 @@ const CareersPage: React.FC = () => {
             </div>
             <button 
               onClick={handleSearch}
-              className="bg-green-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-green-400 transition-all shadow-lg active:scale-95"
+              className="bg-blue-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-400 transition-all shadow-lg active:scale-95"
             >
               Search
             </button>
@@ -94,18 +94,18 @@ const CareersPage: React.FC = () => {
         <aside className="lg:col-span-1 space-y-8">
           <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
             <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
-              <i className="fas fa-filter text-green-600"></i> Job Filters
+              <i className="fas fa-filter text-blue-600"></i> Job Filters
             </h3>
             <div className="space-y-4">
               {jobTypes.map(type => (
                 <label key={type} className="flex items-center gap-3 cursor-pointer group">
                   <input 
                     type="checkbox" 
-                    className="w-5 h-5 rounded-lg border-slate-300 text-green-600 focus:ring-green-500" 
+                    className="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500" 
                     checked={activeTypes.includes(type)}
                     onChange={() => toggleType(type)}
                   />
-                  <span className={`text-sm ${activeTypes.includes(type) ? 'text-green-600 font-bold' : 'text-slate-600'} group-hover:text-green-600 transition-colors`}>
+                  <span className={`text-sm ${activeTypes.includes(type) ? 'text-blue-600 font-bold' : 'text-slate-600'} group-hover:text-blue-600 transition-colors`}>
                     {type}
                   </span>
                 </label>
@@ -129,7 +129,7 @@ const CareersPage: React.FC = () => {
               {isLoading ? 'Scanning Opportunities...' : `Latest Openings (${filteredJobs.length})`}
             </h2>
             {!isLoading && (
-              <button onClick={() => loadJobs()} className="text-xs text-green-600 font-bold hover:underline">
+              <button onClick={() => loadJobs()} className="text-xs text-blue-600 font-bold hover:underline">
                 View All Careers
               </button>
             )}
@@ -148,12 +148,12 @@ const CareersPage: React.FC = () => {
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="flex gap-4">
-                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-green-50 transition-colors shadow-inner">
-                      <i className="fas fa-building text-slate-300 group-hover:text-green-500 text-2xl transition-colors"></i>
+                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 transition-colors shadow-inner">
+                      <i className="fas fa-building text-slate-300 group-hover:text-blue-500 text-2xl transition-colors"></i>
                     </div>
                     <div>
-                      <h3 className="font-bold text-xl text-slate-800 group-hover:text-green-600 transition-colors">{job.title}</h3>
-                      <p className="text-green-600 font-semibold">{job.company}</p>
+                      <h3 className="font-bold text-xl text-slate-800 group-hover:text-blue-600 transition-colors">{job.title}</h3>
+                      <p className="text-blue-600 font-semibold">{job.company}</p>
                       <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 mt-2">
                         <span className="flex items-center gap-1"><i className="fas fa-map-marker-alt"></i> {job.location}</span>
                         <span className="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded text-slate-500 font-bold">{job.type}</span>
@@ -164,7 +164,7 @@ const CareersPage: React.FC = () => {
                     href={job.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-full md:w-auto bg-slate-900 text-white hover:bg-green-600 px-8 py-3 rounded-xl font-bold text-sm transition-all text-center active:scale-95"
+                    className="w-full md:w-auto bg-slate-900 text-white hover:bg-blue-600 px-8 py-3 rounded-xl font-bold text-sm transition-all text-center active:scale-95"
                   >
                     Apply Now
                   </a>
@@ -180,7 +180,7 @@ const CareersPage: React.FC = () => {
             <div className="text-center py-20 bg-white rounded-[2rem] border border-slate-100">
                <i className="fas fa-search text-slate-100 text-8xl mb-6"></i>
                <p className="text-slate-400 font-medium text-lg">No matches found for "{searchTerm}"</p>
-               <button onClick={() => {setSearchTerm(''); loadJobs();}} className="mt-4 text-green-600 font-bold hover:underline">Clear search and filters</button>
+               <button onClick={() => {setSearchTerm(''); loadJobs();}} className="mt-4 text-blue-600 font-bold hover:underline">Clear search and filters</button>
             </div>
           )}
         </div>

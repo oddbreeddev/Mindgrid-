@@ -17,7 +17,7 @@ const ToolsPage: React.FC = () => {
       description: 'Generate a personalized study schedule tailored to your course load.',
       icon: 'fa-calendar-alt',
       path: '/tools/timetable',
-      color: 'bg-green-600',
+      color: 'bg-blue-600',
       tag: 'Planning'
     },
     {
@@ -49,7 +49,7 @@ const ToolsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-16">
       <div className="text-center mb-16 space-y-4">
-        <h1 className="text-5xl font-black text-slate-900 tracking-tight">Student <span className="text-green-600">Utility Hub</span></h1>
+        <h1 className="text-5xl font-black text-slate-900 tracking-tight">Student <span className="text-blue-600">Utility Hub</span></h1>
         <p className="text-slate-500 max-w-2xl mx-auto text-lg font-medium">Tools designed to simplify your academic life and fast-track your tech career.</p>
       </div>
 
@@ -73,7 +73,7 @@ const ToolsPage: React.FC = () => {
             <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight">{tool.title}</h3>
             <p className="text-slate-500 text-xs mb-8 leading-relaxed font-medium">{tool.description}</p>
             
-            <div className="mt-auto flex items-center gap-2 text-slate-900 font-bold text-xs group-hover:text-green-600 transition-colors">
+            <div className="mt-auto flex items-center gap-2 text-slate-900 font-bold text-xs group-hover:text-blue-600 transition-colors">
               Launch Tool <i className="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
             </div>
           </Link>
@@ -85,7 +85,7 @@ const ToolsPage: React.FC = () => {
         <div className="relative z-10">
           <h2 className="text-3xl font-black mb-4">Suggest a Tool</h2>
           <p className="text-slate-400 mb-8 max-w-lg mx-auto">Is there a calculator or resource you need for your specific department? Let us know!</p>
-          <Link to="/contact" className="bg-green-500 hover:bg-green-400 text-white px-8 py-3 rounded-xl font-bold transition-all inline-block">
+          <Link to="/contact" className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-3 rounded-xl font-bold transition-all inline-block">
             Submit Request
           </Link>
         </div>

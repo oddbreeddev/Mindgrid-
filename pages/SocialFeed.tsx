@@ -21,6 +21,10 @@ const PostItem: React.FC<{ post: Post; user: any; idx: number; formatTime: (t: a
   const [likesCount, setLikesCount] = useState(post.likes_count || 0);
 
   useEffect(() => {
+    setLikesCount(post.likes_count || 0);
+  }, [post.likes_count]);
+
+  useEffect(() => {
     if (user) {
       checkIfPostLiked(post.id, user.uid).then(setIsLiked);
     }

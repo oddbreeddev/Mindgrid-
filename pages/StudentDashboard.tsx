@@ -22,7 +22,7 @@ const StudentDashboard: React.FC = () => {
   const tools = [
     { title: 'AI Study Friend', desc: 'Ask any school question.', icon: Cpu, path: '/ai-hub', color: 'bg-blue-600' },
     { title: 'Student Feed', desc: 'See what is trending.', icon: MessageSquare, path: '/feed', color: 'bg-rose-600' },
-    { title: 'Grade Checker', desc: 'Calculate your GPA.', icon: Calculator, path: '/tools/cgpa', color: 'bg-emerald-600' },
+    { title: 'Grade Checker', desc: 'Calculate your GPA.', icon: Calculator, path: '/tools/cgpa', color: 'bg-blue-600' },
     { title: 'Study Vault', desc: 'Handy reading guides.', icon: Library, path: '/library', color: 'bg-indigo-600' }
   ];
 
@@ -58,7 +58,7 @@ const StudentDashboard: React.FC = () => {
             </div>
             <div className="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col justify-center min-w-[120px]">
               <span className="text-gray-500 text-[9px] font-bold uppercase mb-1">Badges</span>
-              <span className="text-xl font-bold text-emerald-500">4 Unlocked</span>
+              <span className="text-xl font-bold text-blue-500">4 Unlocked</span>
             </div>
           </div>
         </div>

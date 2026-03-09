@@ -71,7 +71,7 @@ const BlogPage: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
-             <h1 className="text-4xl font-black text-slate-800">MindGrid <span className="text-green-600">Live</span></h1>
+             <h1 className="text-4xl font-black text-slate-800">MindGrid <span className="text-blue-600">Live</span></h1>
              {articles.some(a => a.isRealtime) && (
                <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded animate-pulse uppercase tracking-widest">Live Search</span>
              )}
@@ -83,7 +83,7 @@ const BlogPage: React.FC = () => {
             <button 
               key={cat} 
               onClick={() => { setActiveCategory(cat); setVisibleCount(5); }}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeCategory === cat ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200 hover:border-green-300'}`}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeCategory === cat ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200 hover:border-blue-300'}`}
             >
               {cat}
             </button>
@@ -104,7 +104,7 @@ const BlogPage: React.FC = () => {
                   <div className="w-full md:w-64 h-52 bg-slate-100 flex-shrink-0 relative overflow-hidden">
                     <img src={getBlogImage(post.category, i)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={post.category} />
                     <div className="absolute top-4 left-4">
-                       <span className="bg-green-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase shadow-lg">{post.category || 'News'}</span>
+                       <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase shadow-lg">{post.category || 'News'}</span>
                     </div>
                   </div>
                   <div className="p-8 flex flex-col justify-center">
@@ -117,10 +117,10 @@ const BlogPage: React.FC = () => {
                         url={post.url}
                       />
                     </div>
-                    <h2 className="text-2xl font-black text-slate-800 mb-3 leading-tight group-hover:text-green-600 transition-colors">{cleanText(post.title)}</h2>
+                    <h2 className="text-2xl font-black text-slate-800 mb-3 leading-tight group-hover:text-blue-600 transition-colors">{cleanText(post.title)}</h2>
                     <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">{cleanText(post.excerpt)}</p>
                     <div className="flex items-center gap-6">
-                      <a href={post.url} target="_blank" className="inline-flex items-center gap-3 text-green-600 font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
+                      <a href={post.url} target="_blank" className="inline-flex items-center gap-3 text-blue-600 font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
                         Read Source <i className="fas fa-arrow-right text-[10px]"></i>
                       </a>
                       <ShareButton 
@@ -148,7 +148,7 @@ const BlogPage: React.FC = () => {
         <aside className="space-y-8">
           <div className="bg-slate-900 p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden group">
              <div className="relative z-10">
-               <h3 className="font-black text-xl mb-4 text-green-400">Deep Dives?</h3>
+               <h3 className="font-black text-xl mb-4 text-blue-400">Deep Dives?</h3>
                <p className="text-sm text-slate-400 mb-6 leading-relaxed">Looking for long-form academic guides and student-suggested topics?</p>
                <Link to="/library" className="w-full bg-white text-slate-900 font-black py-4 rounded-xl hover:bg-slate-100 transition-colors block text-center uppercase text-xs tracking-widest">
                  Visit The Library
@@ -161,7 +161,7 @@ const BlogPage: React.FC = () => {
           
           <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
              <h3 className="text-slate-800 font-black text-lg mb-6 flex items-center gap-2">
-               <i className="fas fa-info-circle text-green-600"></i> AI Verification
+               <i className="fas fa-info-circle text-blue-600"></i> AI Verification
              </h3>
              <p className="text-slate-500 text-sm leading-relaxed mb-6">
                MindGrid uses <strong>Google Search Grounding</strong> to verify all news items. Our AI scans millions of pages to bring you only what matters.

@@ -1,5 +1,6 @@
 
 import { MOCK_NEWS, MOCK_CAREERS, MOCK_BUZZ, MOCK_CURATED_ARTICLES } from '../data/staticData';
+import { StudyRoom } from '../types';
 import { fetchRealtimeNews } from './geminiService';
 import { db, handleFirestoreError } from '../src/firebase';
 import { 
@@ -47,6 +48,7 @@ export const createSocialPost = async (userId: string, email: string, content: s
       user_id: userId,
       user_email: email,
       content: content,
+      likes_count: 0,
       created_at: serverTimestamp()
     });
     return { id: docRef.id };
@@ -342,31 +344,101 @@ export const markNotificationRead = async (notificationId: string) => {
   } catch (e) {}
 };
 
-// Study Group Services
-export const getStudyGroups = async () => {
+// Study Room Services
+export const getStudyRooms = async (userId: string) => {
   try {
-    const q = query(collection(db, 'study_groups'), orderBy('name', 'asc'));
+    // Get public rooms
+    const publicQ = query(collection(db, 'study_rooms'), where('is_private', '==', false));
+    const publicSnapshot = await getDocs(publicQ);
+    const publicRooms = publicSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Get private rooms where user is a member
+    const privateQ = query(collection(db, 'study_rooms'), where('is_private', '==', true), where('members', 'array-contains', userId));
+    const privateSnapshot = await getDocs(privateQ);
+    const privateRooms = privateSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Combine and remove duplicates
+    const allRooms = [...publicRooms, ...privateRooms];
+    const uniqueRooms = Array.from(new Map(allRooms.map(item => [item.id, item])).values());
+    
+    return uniqueRooms;
+  } catch (e) { 
+    console.error("Fetch Rooms Error:", e);
+    return []; 
+  }
+};
+
+export const createStudyRoom = async (name: string, description: string, isPrivate: boolean, ownerId: string) => {
+  try {
+    const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const docRef = await addDoc(collection(db, 'study_rooms'), {
+      name,
+      description,
+      owner_id: ownerId,
+      is_private: isPrivate,
+      join_code: joinCode,
+      members: [ownerId],
+      created_at: serverTimestamp()
+    });
+    
+    // Create a default "General" topic
+    await addDoc(collection(db, 'study_rooms', docRef.id, 'topics'), {
+      room_id: docRef.id,
+      name: 'General',
+      description: 'General discussion for this room.',
+      created_at: serverTimestamp()
+    });
+
+    return { id: docRef.id, joinCode };
+  } catch (e) { return null; }
+};
+
+export const joinRoomWithCode = async (joinCode: string, userId: string): Promise<StudyRoom> => {
+  try {
+    const q = query(collection(db, 'study_rooms'), where('join_code', '==', joinCode.toUpperCase()));
+    const snapshot = await getDocs(q);
+    
+    if (snapshot.empty) throw new Error("Invalid join code");
+    
+    const roomDoc = snapshot.docs[0];
+    const roomData = roomDoc.data() as Omit<StudyRoom, 'id'>;
+    
+    if (!roomData.members.includes(userId)) {
+      await updateDoc(doc(db, 'study_rooms', roomDoc.id), {
+        members: [...roomData.members, userId]
+      });
+    }
+    
+    return { id: roomDoc.id, ...roomData };
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+export const getRoomTopics = async (roomId: string) => {
+  try {
+    const q = query(collection(db, 'study_rooms', roomId, 'topics'), orderBy('created_at', 'asc'));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (e) { return []; }
 };
 
-export const getGroupMessages = async (groupId: string) => {
+export const createRoomTopic = async (roomId: string, name: string, description: string) => {
   try {
-    const q = query(
-      collection(db, 'study_groups', groupId, 'messages'),
-      orderBy('created_at', 'asc'),
-      limit(100)
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  } catch (e) { return []; }
+    const docRef = await addDoc(collection(db, 'study_rooms', roomId, 'topics'), {
+      room_id: roomId,
+      name,
+      description,
+      created_at: serverTimestamp()
+    });
+    return { id: docRef.id };
+  } catch (e) { return null; }
 };
 
-export const sendGroupMessage = async (groupId: string, userId: string, userName: string, content: string, isAi: boolean = false) => {
+export const sendTopicMessage = async (roomId: string, topicId: string, userId: string, userName: string, content: string, isAi: boolean = false) => {
   try {
-    const docRef = await addDoc(collection(db, 'study_groups', groupId, 'messages'), {
-      group_id: groupId,
+    const docRef = await addDoc(collection(db, 'study_rooms', roomId, 'topics', topicId, 'messages'), {
+      topic_id: topicId,
       user_id: userId,
       user_name: userName,
       content,
@@ -417,18 +489,33 @@ export const checkIfPostLiked = async (postId: string, userId: string) => {
 // Admin Seeding
 export const seedStudyGroups = async () => {
   try {
-    const groups = [
-      { name: 'Computer Science', department: 'Science', description: 'Discuss algorithms, coding, and tech.' },
-      { name: 'Mechanical Engineering', department: 'Engineering', description: 'Thermodynamics and machine design.' },
-      { name: 'Economics', department: 'Social Sciences', description: 'Macro and micro economic theories.' },
-      { name: 'Medicine', department: 'Health Sciences', description: 'Clinical discussions and anatomy.' }
+    const rooms = [
+      { name: 'Computer Science', description: 'Discuss algorithms, coding, and tech.', is_private: false },
+      { name: 'Mechanical Engineering', description: 'Thermodynamics and machine design.', is_private: false },
+      { name: 'Economics', description: 'Macro and micro economic theories.', is_private: false },
+      { name: 'Medicine', description: 'Clinical discussions and anatomy.', is_private: false }
     ];
 
-    for (const group of groups) {
-      await addDoc(collection(db, 'study_groups'), {
-        ...group,
+    for (const room of rooms) {
+      const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const docRef = await addDoc(collection(db, 'study_rooms'), {
+        ...room,
+        owner_id: 'system',
+        join_code: joinCode,
+        members: [],
         created_at: serverTimestamp()
       });
+
+      // Add default topics
+      const topics = ['General', 'Past Questions', 'Project Help'];
+      for (const topicName of topics) {
+        await addDoc(collection(db, 'study_rooms', docRef.id, 'topics'), {
+          room_id: docRef.id,
+          name: topicName,
+          description: `${topicName} discussion for ${room.name}`,
+          created_at: serverTimestamp()
+        });
+      }
     }
     return true;
   } catch (e) {

@@ -98,31 +98,46 @@
       },
       "required": ["user_id", "title", "message", "type", "read", "created_at"]
     },
-    "StudyGroup": {
-      "title": "Study Group",
-      "description": "Departmental chat rooms",
+    "StudyRoom": {
+      "title": "Study Room",
+      "description": "A collaborative space for students, similar to a Discord server.",
       "type": "object",
       "properties": {
-        "name": { "type": "string", "description": "Group name (e.g. Computer Science)" },
-        "department": { "type": "string", "description": "Associated department" },
-        "description": { "type": "string", "description": "Group purpose" },
+        "name": { "type": "string", "description": "Room name" },
+        "description": { "type": "string", "description": "Room purpose" },
+        "owner_id": { "type": "string", "description": "UID of the creator" },
+        "is_private": { "type": "boolean", "description": "Whether room is private" },
+        "join_code": { "type": "string", "description": "Unique code to join" },
+        "members": { "type": "array", "items": { "type": "string" }, "description": "List of member UIDs" },
         "created_at": { "type": "string", "format": "date-time", "description": "Creation time" }
       },
-      "required": ["name", "department", "created_at"]
+      "required": ["name", "owner_id", "join_code", "created_at"]
     },
-    "GroupMessage": {
-      "title": "Group Message",
-      "description": "Messages within a study group",
+    "RoomTopic": {
+      "title": "Room Topic",
+      "description": "A specific channel within a Study Room.",
       "type": "object",
       "properties": {
-        "group_id": { "type": "string", "description": "Parent group ID" },
+        "room_id": { "type": "string", "description": "Parent room ID" },
+        "name": { "type": "string", "description": "Topic name (e.g. PHY 101)" },
+        "description": { "type": "string", "description": "Topic description" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Creation time" }
+      },
+      "required": ["room_id", "name", "created_at"]
+    },
+    "TopicMessage": {
+      "title": "Topic Message",
+      "description": "Messages within a specific topic",
+      "type": "object",
+      "properties": {
+        "topic_id": { "type": "string", "description": "Parent topic ID" },
         "user_id": { "type": "string", "description": "Sender UID" },
         "user_name": { "type": "string", "description": "Sender name" },
         "content": { "type": "string", "description": "Message text" },
         "is_ai": { "type": "boolean", "description": "Whether message is from Gemini" },
         "created_at": { "type": "string", "format": "date-time", "description": "Time of message" }
       },
-      "required": ["group_id", "user_id", "user_name", "content", "created_at"]
+      "required": ["topic_id", "user_id", "user_name", "content", "created_at"]
     }
   },
   "firestore": {
@@ -154,13 +169,17 @@
       "schema": "Notification",
       "description": "User alerts"
     },
-    "/study_groups/{groupId}": {
-      "schema": "StudyGroup",
-      "description": "Departmental rooms"
+    "/study_rooms/{roomId}": {
+      "schema": "StudyRoom",
+      "description": "Discord-like study rooms"
     },
-    "/study_groups/{groupId}/messages/{messageId}": {
-      "schema": "GroupMessage",
-      "description": "Chat messages"
+    "/study_rooms/{roomId}/topics/{topicId}": {
+      "schema": "RoomTopic",
+      "description": "Topics/Channels within a room"
+    },
+    "/study_rooms/{roomId}/topics/{topicId}/messages/{messageId}": {
+      "schema": "TopicMessage",
+      "description": "Chat messages within a topic"
     }
   }
 }

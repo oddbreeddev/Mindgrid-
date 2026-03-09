@@ -91,7 +91,7 @@ const CGPACalculator: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
       <div className="bg-white rounded-[2rem] md:rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-        <div className="bg-green-600 p-6 md:p-8 text-white">
+        <div className="bg-blue-600 p-6 md:p-8 text-white">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-black mb-1">CGPA Calculator</h1>
@@ -124,9 +124,9 @@ const CGPACalculator: React.FC = () => {
               <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Points</p>
               <p className="text-2xl font-black text-slate-800">{totalPoints}</p>
             </div>
-            <div className="bg-green-50 p-4 rounded-2xl border border-green-100 text-center">
-              <p className="text-[10px] font-black text-green-600 uppercase mb-1">CGPA</p>
-              <p className="text-4xl font-black text-green-700">{cgpa.toFixed(2)}</p>
+            <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
+              <p className="text-[10px] font-black text-blue-600 uppercase mb-1">CGPA</p>
+              <p className="text-4xl font-black text-blue-700">{cgpa.toFixed(2)}</p>
             </div>
           </div>
 
@@ -138,21 +138,21 @@ const CGPACalculator: React.FC = () => {
                     <input
                       type="text"
                       placeholder="Course Code"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                       value={course.name}
                       onChange={(e) => updateCourse(course.id, 'name', e.target.value)}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3 md:col-span-5">
                     <select
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-green-500 outline-none"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
                       value={course.unit}
                       onChange={(e) => updateCourse(course.id, 'unit', e.target.value)}
                     >
                       {[1, 2, 3, 4, 5, 6].map(u => <option key={u} value={u}>{u} Unit{u > 1 ? 's' : ''}</option>)}
                     </select>
                     <select
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-green-700 focus:ring-2 focus:ring-green-500 outline-none"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-blue-700 focus:ring-2 focus:ring-blue-500 outline-none"
                       value={course.grade}
                       onChange={(e) => updateCourse(course.id, 'grade', e.target.value)}
                     >

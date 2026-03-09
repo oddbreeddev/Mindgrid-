@@ -57,3 +57,14 @@ export interface UserProgress {
   topic_id: string;
   completed_at: string;
 }
+
+export interface StudyRoom {
+  id: string;
+  name: string;
+  description: string;
+  owner_id: string;
+  is_private: boolean;
+  join_code: string;
+  members: string[];
+  created_at: any;
+}
