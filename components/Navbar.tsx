@@ -22,7 +22,16 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
         <div className="flex items-center">
           <Link to="/" className="flex items-center gap-2 group" aria-label="MindGrid Home">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-              <Cpu size={24} className="text-white" />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Left Brain Hemisphere - More organic shape */}
+                <path d="M12 4C9.5 4 7 5.5 6.2 8.5C5.5 11.5 6.5 14.5 8.5 15.5C9.5 16 10.5 16.5 12 16.5V4Z" fill="white" fillOpacity="0.9"/>
+                <path d="M12 16.5C10.5 16.5 9 17 8 18C7 19 6.5 20 6.5 21H12V16.5Z" fill="white" fillOpacity="0.7"/>
+                {/* Right Brain Hemisphere - More organic shape */}
+                <path d="M12 4C14.5 4 17 5.5 17.8 8.5C18.5 11.5 17.5 14.5 15.5 15.5C14.5 16 13.5 16.5 12 16.5V4Z" fill="white" fillOpacity="0.5"/>
+                <path d="M12 16.5C13.5 16.5 15 17 16 18C17 19 17.5 20 17.5 21H12V16.5Z" fill="white" fillOpacity="0.3"/>
+                {/* Central Split Line */}
+                <line x1="12" y1="4" x2="12" y2="21" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+              </svg>
             </div>
             <span className="text-2xl font-bold tracking-tight text-white">
               Mind<span className="text-blue-500">Grid</span>

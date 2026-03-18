@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { getSocialBuzz } from '../services/dataService';
 
 interface BuzzItem {
-  platform: 'Twitter' | 'TikTok' | 'Instagram' | 'Facebook';
+  platform: 'X' | 'TikTok' | 'Facebook';
   topic: string;
-  explanation: string;
-  trendLevel: number;
+  description: string;
+  url?: string;
 }
 
 const SocialBuzzCarousel: React.FC = () => {
@@ -16,7 +16,6 @@ const SocialBuzzCarousel: React.FC = () => {
   useEffect(() => {
     const loadBuzz = async () => {
       const data = await getSocialBuzz();
-      // Fix: Use type assertion to match BuzzItem[] interface requirements as getSocialBuzz returns generalized data
       if (data && data.length > 0) setBuzz(data as BuzzItem[]);
       setIsLoading(false);
     };
@@ -25,9 +24,8 @@ const SocialBuzzCarousel: React.FC = () => {
 
   const getPlatformStyles = (platform: string) => {
     switch (platform) {
-      case 'Twitter': return { icon: 'fa-x-twitter', color: 'bg-slate-900', text: 'text-white' };
+      case 'X': return { icon: 'fa-x-twitter', color: 'bg-slate-900', text: 'text-white' };
       case 'TikTok': return { icon: 'fa-tiktok', color: 'bg-[#000000]', text: 'text-white' };
-      case 'Instagram': return { icon: 'fa-instagram', color: 'bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600', text: 'text-white' };
       default: return { icon: 'fa-facebook', color: 'bg-blue-600', text: 'text-white' };
     }
   };
@@ -56,23 +54,18 @@ const SocialBuzzCarousel: React.FC = () => {
                 <div className={`${style.color} ${style.text} w-10 h-10 rounded-xl flex items-center justify-center text-lg shadow-sm`}>
                   <i className={`fab ${style.icon}`}></i>
                 </div>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className={`h-1 w-3 rounded-full ${i < Math.round(item.trendLevel / 2) ? 'bg-orange-400' : 'bg-slate-100'}`}></div>
-                  ))}
-                </div>
               </div>
               <h4 className="text-lg font-black text-slate-800 mb-2 line-clamp-1">#{item.topic.replace(/#/g, '')}</h4>
               <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-4 h-[60px]">
-                {item.explanation}
+                {item.description}
               </p>
               <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 pt-4 border-t border-slate-50">
                 <span>{item.platform} Trend</span>
                 <a 
-                  href={`https://google.com/search?q=${encodeURIComponent(item.platform + ' ' + item.topic)}`} 
+                  href={item.url || `https://google.com/search?q=${encodeURIComponent(item.platform + ' ' + item.topic)}`} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                  className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
                 >
                   Explore <i className="fas fa-chevron-right text-[8px]"></i>
                 </a>

@@ -1,7 +1,7 @@
 
 import { MOCK_NEWS, MOCK_CAREERS, MOCK_BUZZ, MOCK_CURATED_ARTICLES } from '../data/staticData';
 import { StudyRoom } from '../types';
-import { fetchRealtimeNews } from './geminiService';
+import { fetchRealtimeNews, fetchTrendingSocialMedia, curateDailyLibraryArticles, fetchRealtimeJobs } from './geminiService';
 import { db, handleFirestoreError } from '../src/firebase';
 import { 
   collection, 
@@ -174,11 +174,70 @@ export const downloadSubscribersCSV = (subscribers: any[]) => {
 
 export const getNews = async (category: string = 'All') => {
   try {
+    // Check if we have news for today in the archive
+    const today = new Date().toISOString().split('T')[0];
+    const q = query(
+      collection(db, 'news_archive'),
+      where('date', '==', today),
+      limit(20)
+    );
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const archivedNews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (category === 'All') return archivedNews;
+      return archivedNews.filter((n: any) => n.category?.toLowerCase() === category.toLowerCase());
+    }
+
+    // If no news for today, fetch from Gemini
     const realtimeNews = await fetchRealtimeNews(category);
-    if (realtimeNews && realtimeNews.length > 0) return realtimeNews;
-  } catch (e) {}
-  if (category === 'All') return MOCK_NEWS;
-  return MOCK_NEWS.filter(news => news.category.toLowerCase() === category.toLowerCase());
+    if (realtimeNews && realtimeNews.length > 0) {
+      // Save to archive for today
+      for (const item of realtimeNews) {
+        await addDoc(collection(db, 'news_archive'), {
+          ...item,
+          date: today,
+          created_at: serverTimestamp()
+        });
+      }
+      return realtimeNews;
+    }
+  } catch (e) {
+    console.error("News Fetch Error:", e);
+  }
+  
+  // No mock fallback as per user request
+  return [];
+};
+
+export const getSocialBuzz = async () => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const q = query(
+      collection(db, 'trends_archive'),
+      where('date', '==', today)
+    );
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+
+    const trends = await fetchTrendingSocialMedia();
+    if (trends && trends.length > 0) {
+      for (const trend of trends) {
+        await addDoc(collection(db, 'trends_archive'), {
+          ...trend,
+          date: today,
+          created_at: serverTimestamp()
+        });
+      }
+      return trends;
+    }
+  } catch (e) {
+    console.error("Trends Fetch Error:", e);
+  }
+  return []; // No mock fallback
 };
 
 export const getCuratedArticles = async (status: string = 'approved') => {
@@ -186,11 +245,34 @@ export const getCuratedArticles = async (status: string = 'approved') => {
     const q = query(
       collection(db, 'curated_articles'), 
       where('status', '==', status),
-      orderBy('created_at', 'desc')
+      orderBy('created_at', 'desc'),
+      limit(20)
     );
     const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return status === 'approved' ? [...data, ...MOCK_CURATED_ARTICLES] : data;
+    let data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // If it's for the library (approved) and we have fewer than 3 articles for today
+    if (status === 'approved') {
+      const today = new Date().toISOString().split('T')[0];
+      const todayArticles = data.filter((a: any) => {
+        const createdDate = a.created_at?.toDate ? a.created_at.toDate().toISOString().split('T')[0] : '';
+        return createdDate === today;
+      });
+
+      if (todayArticles.length < 3) {
+        const newArticles = await curateDailyLibraryArticles();
+        if (newArticles && newArticles.length > 0) {
+          for (const article of newArticles) {
+            await saveCuratedArticle(article, 'MindGrid AI', 'approved', 'system');
+          }
+          // Refresh data
+          const refreshedSnapshot = await getDocs(q);
+          data = refreshedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+      }
+    }
+
+    return data.length > 0 ? data : MOCK_CURATED_ARTICLES;
   } catch (e) { 
     console.error("Fetch Articles Error:", e);
     return status === 'approved' ? MOCK_CURATED_ARTICLES : []; 
@@ -280,17 +362,46 @@ export const deleteCuratedArticle = async (articleId: string) => {
   }
 };
 
-export const getCareers = async (query: string = '') => {
-  if (!query) return MOCK_CAREERS;
-  const lowerQuery = query.toLowerCase();
-  return MOCK_CAREERS.filter(job => 
-    job.title.toLowerCase().includes(lowerQuery) || 
-    job.company.toLowerCase().includes(lowerQuery) ||
-    job.description.toLowerCase().includes(lowerQuery)
-  );
-};
+export const getCareers = async (queryStr: string = '') => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // If it's a generic search (empty query), check archive for today
+    if (!queryStr) {
+      const q = query(
+        collection(db, 'careers_archive'),
+        where('date', '==', today),
+        limit(20)
+      );
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      }
+    }
 
-export const getSocialBuzz = async () => MOCK_BUZZ;
+    // Fetch from Gemini
+    const realtimeJobs = await fetchRealtimeJobs(queryStr);
+    
+    if (realtimeJobs && realtimeJobs.length > 0) {
+      // If it was a generic search, archive these for today
+      if (!queryStr) {
+        for (const job of realtimeJobs) {
+          await addDoc(collection(db, 'careers_archive'), {
+            ...job,
+            date: today,
+            created_at: serverTimestamp()
+          });
+        }
+      }
+      return realtimeJobs;
+    }
+  } catch (e) {
+    console.error("Careers Fetch Error:", e);
+  }
+  
+  return []; // No mock fallback
+};
 
 // Profile Services
 export const getUserProfile = async (userId: string) => {

@@ -186,13 +186,130 @@ export const fetchRealtimeNews = async (category: string) => {
   await throttle();
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
   const searchCategory = category === 'All' ? 'Nigerian Education News' : `Nigerian ${category} news`;
-  const prompt = `Find 3 recent student updates for: "${searchCategory}". Format as a JSON array of objects with title, excerpt, date, url.`;
+  const prompt = `Find 5 recent student updates for: "${searchCategory}". Return a JSON array of objects with title, excerpt, date, url, category.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              excerpt: { type: Type.STRING },
+              date: { type: Type.STRING },
+              url: { type: Type.STRING },
+              category: { type: Type.STRING }
+            },
+            required: ["title", "excerpt", "date", "url", "category"]
+          }
+        }
+      },
+    });
+    return parseAIResponse(response.text);
+  } catch (error) { return null; }
+};
+
+export const fetchTrendingSocialMedia = async () => {
+  if (!isAIConfigured()) return null;
+  await throttle();
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const prompt = `Find the top 3 trending topics for students in Nigeria on TikTok, X (Twitter), and Facebook today. 
+  Return a JSON array of objects with: platform (TikTok, X, or Facebook), topic, description, url.`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: [{ parts: [{ text: prompt }] }],
+      config: {
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              platform: { type: Type.STRING },
+              topic: { type: Type.STRING },
+              description: { type: Type.STRING },
+              url: { type: Type.STRING }
+            },
+            required: ["platform", "topic", "description", "url"]
+          }
+        }
+      },
+    });
+    return parseAIResponse(response.text);
+  } catch (error) { return null; }
+};
+
+export const curateDailyLibraryArticles = async () => {
+  if (!isAIConfigured()) return null;
+  await throttle();
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const prompt = `Curate 3 high-quality academic or tech articles for Nigerian students. 
+  Topics should be diverse (e.g., Study Tips, AI in Education, Career Guidance).
+  Return a JSON array of objects with: title, excerpt, content (Markdown), category, image_id (Unsplash ID).`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: [{ parts: [{ text: prompt }] }],
+      config: {
+        systemInstruction: "You are the Lead Curator of MindGrid Library. Ensure the content is highly relevant to Nigerian students.",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              excerpt: { type: Type.STRING },
+              content: { type: Type.STRING },
+              category: { type: Type.STRING },
+              image_id: { type: Type.STRING }
+            },
+            required: ["title", "excerpt", "content", "category", "image_id"]
+          }
+        }
+      },
+    });
+    return parseAIResponse(response.text);
+  } catch (error) { return null; }
+};
+
+export const fetchRealtimeJobs = async (query?: string) => {
+  if (!isAIConfigured()) return null;
+  await throttle();
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const searchQuery = query ? `Nigerian ${query} jobs` : 'Nigerian internships and graduate trainee programs';
+  const prompt = `Find 5 real current job openings, internships, or graduate trainee programs in Nigeria for students or graduates. 
+  Search for: "${searchQuery}".
+  Return a JSON array of objects with: title, company, location, type (Full-time, Internship, etc.), url, description.`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: [{ parts: [{ text: prompt }] }],
+      config: {
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              company: { type: Type.STRING },
+              location: { type: Type.STRING },
+              type: { type: Type.STRING },
+              url: { type: Type.STRING },
+              description: { type: Type.STRING }
+            },
+            required: ["title", "company", "location", "type", "url", "description"]
+          }
+        }
       },
     });
     return parseAIResponse(response.text);

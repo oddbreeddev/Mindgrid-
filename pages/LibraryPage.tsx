@@ -48,13 +48,22 @@ const LibraryPage: React.FC = () => {
   const [newArticle, setNewArticle] = useState({ title: '', content: '', category: 'General' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const getAnonymousId = useCallback(() => {
+    let id = localStorage.getItem('mindgrid_anonymous_id');
+    if (!id) {
+      id = 'anon_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('mindgrid_anonymous_id', id);
+    }
+    return id;
+  }, []);
+
   const categories = ['All', 'JAMB', 'WAEC', 'Scholarships', 'University', 'Tech', 'Career'];
 
   const handleToggleLike = async (e: React.MouseEvent, articleId: string) => {
     e.stopPropagation();
-    if (!user) return;
+    const userId = user?.uid || getAnonymousId();
     
-    const result = await toggleLikeArticle(articleId, user.uid);
+    const result = await toggleLikeArticle(articleId, userId);
     if (result) {
       setLikedArticles(prev => {
         const next = new Set(prev);
@@ -120,16 +129,15 @@ const LibraryPage: React.FC = () => {
       const data = await getCuratedArticles();
       setArticles(data);
       
-      if (user) {
-        const likedSet = new Set<string>();
-        for (const article of data) {
-          if (article.id) {
-            const liked = await checkIfLiked(article.id, user.uid);
-            if (liked) likedSet.add(article.id);
-          }
+      const userId = user?.uid || getAnonymousId();
+      const likedSet = new Set<string>();
+      for (const article of data) {
+        if (article.id) {
+          const liked = await checkIfLiked(article.id, userId);
+          if (liked) likedSet.add(article.id);
         }
-        setLikedArticles(likedSet);
       }
+      setLikedArticles(likedSet);
 
       const lastGen = localStorage.getItem('mindgrid_v3_last_gen');
       const now = Date.now();

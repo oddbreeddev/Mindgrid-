@@ -138,6 +138,49 @@
         "created_at": { "type": "string", "format": "date-time", "description": "Time of message" }
       },
       "required": ["topic_id", "user_id", "user_name", "content", "created_at"]
+    },
+    "NewsArchive": {
+      "title": "News Archive",
+      "description": "Daily fetched news articles",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "url": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "url", "created_at"]
+    },
+    "TrendsArchive": {
+      "title": "Trends Archive",
+      "description": "Daily fetched social media trends",
+      "type": "object",
+      "properties": {
+        "platform": { "type": "string", "enum": ["TikTok", "X", "Facebook"] },
+        "topic": { "type": "string" },
+        "description": { "type": "string" },
+        "url": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["platform", "topic", "created_at"]
+    },
+    "CareersArchive": {
+      "title": "Careers Archive",
+      "description": "Daily fetched job listings",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "company": { "type": "string" },
+        "location": { "type": "string" },
+        "type": { "type": "string" },
+        "url": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "company", "url", "created_at"]
     }
   },
   "firestore": {
@@ -180,6 +223,18 @@
     "/study_rooms/{roomId}/topics/{topicId}/messages/{messageId}": {
       "schema": "TopicMessage",
       "description": "Chat messages within a topic"
+    },
+    "/news_archive/{newsId}": {
+      "schema": "NewsArchive",
+      "description": "Daily education news"
+    },
+    "/trends_archive/{trendId}": {
+      "schema": "TrendsArchive",
+      "description": "Daily social media trends"
+    },
+    "/careers_archive/{careerId}": {
+      "schema": "CareersArchive",
+      "description": "Daily job listings"
     }
   }
 }

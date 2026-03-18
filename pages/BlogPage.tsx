@@ -156,8 +156,6 @@ const BlogPage: React.FC = () => {
              </div>
              <i className="fas fa-book-open absolute -right-4 -bottom-4 text-8xl text-white/5 transform -rotate-12 group-hover:scale-110 transition-transform"></i>
           </div>
-
-          <AdPlaceholder slot="sidebar-top" className="h-[250px]" />
           
           <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
              <h3 className="text-slate-800 font-black text-lg mb-6 flex items-center gap-2">

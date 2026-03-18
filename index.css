@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -8,11 +9,17 @@
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    font-size: 14px; /* Smaller base font for mobile */
+  }
+  
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
   }
   
   body {
     @apply bg-[#050505] text-[#f8fafc] antialiased overflow-x-hidden;
-    font-size: 16px;
   }
 
   h1, h2, h3, h4, h5, h6 {
