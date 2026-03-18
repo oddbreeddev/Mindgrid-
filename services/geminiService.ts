@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 
 export const isAIConfigured = () => {
-  const key = typeof process !== 'undefined' ? process.env.API_KEY : '';
+  const key = typeof process !== 'undefined' ? (process.env.GEMINI_API_KEY || process.env.API_KEY) : '';
   return !!key && key.length > 10;
 };
 
@@ -31,7 +31,7 @@ export const generateLessonContent = async (subject: string, topic: string) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const isPython = subject.toLowerCase().includes('python');
   const isWeb = subject.toLowerCase().includes('web');
   const isData = subject.toLowerCase().includes('data');
@@ -96,7 +96,7 @@ export const fetchCourseRequirements = async (course: string, university: string
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const prompt = `Find the 2024/2025 admission requirements for "${course}" at "${university}" in Nigeria. Include JAMB combination, O-Level requirements, and cutoff mark.`;
 
   try {
@@ -126,7 +126,7 @@ export const generateFullArticle = async (topic?: string) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const prompt = topic 
     ? `Write a 600-word academic guide for Nigerian students on: "${topic}". Return as JSON.`
     : `Choose a random trending academic/tech topic for Nigerian students. Return as JSON.`;
@@ -160,7 +160,7 @@ export const generateFullArticle = async (topic?: string) => {
 export const generateStudyHelp = async (query: string, useSearch: boolean = false) => {
   if (!isAIConfigured()) throw new Error("API_KEY_MISSING");
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   try {
     const config: any = {
       systemInstruction: `You are MindGrid AI, an academic mentor for Nigerians. Grounding: JAMB, WAEC, NUC.`,
@@ -184,7 +184,7 @@ export const generateStudyHelp = async (query: string, useSearch: boolean = fals
 export const fetchRealtimeNews = async (category: string) => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const searchCategory = category === 'All' ? 'Nigerian Education News' : `Nigerian ${category} news`;
   const prompt = `Find 5 recent student updates for: "${searchCategory}". Return a JSON array of objects with title, excerpt, date, url, category.`;
   try {
@@ -217,7 +217,7 @@ export const fetchRealtimeNews = async (category: string) => {
 export const fetchTrendingSocialMedia = async () => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const prompt = `Find the top 3 trending topics for students in Nigeria on TikTok, X (Twitter), and Facebook today. 
   Return a JSON array of objects with: platform (TikTok, X, or Facebook), topic, description, url.`;
   try {
@@ -249,7 +249,7 @@ export const fetchTrendingSocialMedia = async () => {
 export const curateDailyLibraryArticles = async () => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const prompt = `Curate 3 high-quality academic or tech articles for Nigerian students. 
   Topics should be diverse (e.g., Study Tips, AI in Education, Career Guidance).
   Return a JSON array of objects with: title, excerpt, content (Markdown), category, image_id (Unsplash ID).`;
@@ -283,7 +283,7 @@ export const curateDailyLibraryArticles = async () => {
 export const fetchRealtimeJobs = async (query?: string) => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   const searchQuery = query ? `Nigerian ${query} jobs` : 'Nigerian internships and graduate trainee programs';
   const prompt = `Find 5 real current job openings, internships, or graduate trainee programs in Nigeria for students or graduates. 
   Search for: "${searchQuery}".
@@ -319,7 +319,7 @@ export const fetchRealtimeJobs = async (query?: string) => {
 export const generateAISchedule = async (goal: string) => {
   if (!isAIConfigured()) return null;
   await throttle();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -344,7 +344,7 @@ export const generateAISchedule = async (goal: string) => {
 
 export const textToSpeech = async (text: string) => {
   if (!isAIConfigured()) return null;
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY || process.env.API_KEY)! });
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",

@@ -13,7 +13,7 @@
   <script>
     // Robust process shim
     window.process = window.process || {};
-    window.process.env = window.process.env || { NODE_ENV: 'production', API_KEY: '' };
+    window.process.env = window.process.env || { NODE_ENV: 'production', API_KEY: '', GEMINI_API_KEY: '' };
     
     // Global error handler for mobile debugging
     window.onerror = function(msg, url, line, col, error) {

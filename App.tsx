@@ -32,6 +32,9 @@ const StudyGroupsPage = lazy(() => import('./pages/StudyGroupsPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505]">
+    <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/20 mb-8 animate-pulse">
+      <i className="fas fa-brain text-2xl text-white"></i>
+    </div>
     <div className="w-12 h-12 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
     <p className="text-blue-400 font-bold text-xs uppercase tracking-widest">Opening MindGrid...</p>
   </div>

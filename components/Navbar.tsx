@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Cpu, Menu, X, MessageCircle, User, BookOpen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_LINKS } from '../constants';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
@@ -21,17 +22,8 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
       <div className="max-w-7xl mx-auto px-8 w-full flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/" className="flex items-center gap-2 group" aria-label="MindGrid Home">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Left Brain Hemisphere - More organic shape */}
-                <path d="M12 4C9.5 4 7 5.5 6.2 8.5C5.5 11.5 6.5 14.5 8.5 15.5C9.5 16 10.5 16.5 12 16.5V4Z" fill="white" fillOpacity="0.9"/>
-                <path d="M12 16.5C10.5 16.5 9 17 8 18C7 19 6.5 20 6.5 21H12V16.5Z" fill="white" fillOpacity="0.7"/>
-                {/* Right Brain Hemisphere - More organic shape */}
-                <path d="M12 4C14.5 4 17 5.5 17.8 8.5C18.5 11.5 17.5 14.5 15.5 15.5C14.5 16 13.5 16.5 12 16.5V4Z" fill="white" fillOpacity="0.5"/>
-                <path d="M12 16.5C13.5 16.5 15 17 16 18C17 19 17.5 20 17.5 21H12V16.5Z" fill="white" fillOpacity="0.3"/>
-                {/* Central Split Line */}
-                <line x1="12" y1="4" x2="12" y2="21" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
-              </svg>
+            <div className="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+              <i className="fas fa-brain"></i>
             </div>
             <span className="text-2xl font-bold tracking-tight text-white">
               Mind<span className="text-blue-500">Grid</span>
@@ -144,71 +136,82 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenNewsletter }) => {
       </div>
 
       {/* Mobile Menu */}
-      {isOpen && (
-        <>
-          <div 
-            className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[65]" 
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="md:hidden fixed top-0 right-0 bottom-0 w-[80%] max-w-[300px] bg-[#0a0a0a] z-[70] p-8 pt-24 border-l border-white/5 animate-in slide-in-from-right shadow-2xl overflow-y-auto">
-            <div className="flex flex-col gap-6">
-              {isAuthenticated && (
-                <>
-                  <Link
-                    to="/feed"
-                    onClick={() => setIsOpen(false)}
-                    className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
-                  >
-                    <MessageCircle size={24} />
-                    Scholars Feed
-                  </Link>
-                  <Link
-                    to="/study-groups"
-                    onClick={() => setIsOpen(false)}
-                    className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
-                  >
-                    <BookOpen size={24} />
-                    Study Rooms
-                  </Link>
-                  <Link
-                    to="/profile"
-                    onClick={() => setIsOpen(false)}
-                    className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
-                  >
-                    <User size={24} />
-                    My Profile
-                  </Link>
-                </>
-              )}
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`text-xl font-bold p-2 rounded-xl transition-colors ${
-                    location.pathname === link.path ? 'text-blue-500 bg-white/5' : 'text-gray-400 hover:text-blue-500'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="pt-8 border-t border-white/5 flex flex-col gap-4">
-                {isAuthenticated ? (
-                   <button onClick={() => { signOut(); setIsOpen(false); }} className="text-left text-xl font-bold text-red-500 p-2">Sign Out</button>
-                ) : (
-                  <Link
-                    to="/login"
-                    onClick={() => setIsOpen(false)}
-                    className="bg-blue-600 text-white py-4 rounded-2xl text-center font-bold shadow-lg shadow-blue-600/20"
-                  >
-                    Login
-                  </Link>
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[65]" 
+              onClick={() => setIsOpen(false)}
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="md:hidden fixed top-0 right-0 bottom-0 w-[80%] max-w-[300px] bg-[#0a0a0a] z-[70] p-8 pt-24 border-l border-white/5 shadow-2xl overflow-y-auto"
+            >
+              <div className="flex flex-col gap-6">
+                {isAuthenticated && (
+                  <>
+                    <Link
+                      to="/feed"
+                      onClick={() => setIsOpen(false)}
+                      className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
+                    >
+                      <MessageCircle size={24} />
+                      Scholars Feed
+                    </Link>
+                    <Link
+                      to="/study-groups"
+                      onClick={() => setIsOpen(false)}
+                      className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
+                    >
+                      <BookOpen size={24} />
+                      Study Rooms
+                    </Link>
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsOpen(false)}
+                      className="text-xl font-bold text-blue-500 flex items-center gap-3 p-2 rounded-xl bg-blue-500/5"
+                    >
+                      <User size={24} />
+                      My Profile
+                    </Link>
+                  </>
                 )}
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-xl font-bold p-2 rounded-xl transition-colors ${
+                      location.pathname === link.path ? 'text-blue-500 bg-white/5' : 'text-gray-400 hover:text-blue-500'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="pt-8 border-t border-white/5 flex flex-col gap-4">
+                  {isAuthenticated ? (
+                     <button onClick={() => { signOut(); setIsOpen(false); }} className="text-left text-xl font-bold text-red-500 p-2">Sign Out</button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="bg-blue-600 text-white py-4 rounded-2xl text-center font-bold shadow-lg shadow-blue-600/20"
+                    >
+                      Login
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
-        </>
-      )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
